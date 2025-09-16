@@ -155,18 +155,19 @@ vZ^{C} = f_{y}Y^{C} + v_{0}Z^{C}
 $$
 
 
-$$\begin{bmatrix}
-Z^Cu \\
+$$
+\begin{bmatrix}
+Z^Cu \\\\
 Z^Cv 
 \end{bmatrix}
 =
 \begin{bmatrix}
-f_x & 0 & u_0 \\
+f_x & 0 & u_0 \\\\
 0 & f_y & v_0 
 \end{bmatrix}
 \begin{bmatrix}
-X^C \\
-Y^C \\
+X^C \\\\
+Y^C \\\\
 Z^C
 \end{bmatrix}
 $$
