@@ -160,14 +160,11 @@ $$
 Z^Cu \\
 Z^Cv 
 \end{bmatrix}
-
 =
-
 \begin{bmatrix}
 f_x & 0 & u_0 \\
 0 & f_y & v_0 
 \end{bmatrix}
-
 \begin{bmatrix}
 X^C \\
 Y^C \\
@@ -175,6 +172,7 @@ Z^C
 \end{bmatrix}
 $$
 
+.
 
 ## 동차 좌표계(Homogeneous Coordinate System)
 
