@@ -154,7 +154,6 @@ $$
 vZ^{C} = f_{y}Y^{C} + v_{0}Z^{C}
 $$
 
-<br>
 
 $$
 \begin{bmatrix}
@@ -173,7 +172,6 @@ Z^C
 \end{bmatrix}
 $$
 
-<br>
 
 ## 동차 좌표계(Homogeneous Coordinate System)
 
