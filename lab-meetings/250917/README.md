@@ -155,8 +155,7 @@ vZ^{C} = f_{y}Y^{C} + v_{0}Z^{C}
 $$
 
 
-$$
-\begin{bmatrix}
+$$\begin{bmatrix}
 Z^Cu \\
 Z^Cv 
 \end{bmatrix}
