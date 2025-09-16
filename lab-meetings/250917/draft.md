@@ -157,17 +157,17 @@ $$
 
 $$
 \begin{bmatrix}
-Z^Cu \\
+Z^Cu \\\\
 Z^Cv 
 \end{bmatrix}
 =
 \begin{bmatrix}
-f_x & 0 & u_0 \\
+f_x & 0 & u_0 \\\\
 0 & f_y & v_0 
 \end{bmatrix}
 \begin{bmatrix}
-X^C \\
-Y^C \\
+X^C \\\\
+Y^C \\\\
 Z^C
 \end{bmatrix}
 $$
@@ -189,43 +189,45 @@ $$
 
 ![동차 좌표계3](./imgs/homogeneous_3.png)
 
+
 ## 내부 파라미터 행렬(Intrinsic Matrix) 계속
 
 동차 좌표계를 활용하여 내부 파라미터 행렬을 아래와 같이 나타낼 수 있다.
 
 $$
 \begin{bmatrix}
-f_x & 0 & u_0 \\
+f_x & 0 & u_0 \\\\
 0 & f_y & v_0 
 \end{bmatrix}
 \begin{bmatrix}
-X^C \\
-Y^C \\
+X^C \\\\
+Y^C \\\\
 Z^C
 \end{bmatrix}
 =
 \begin{bmatrix}
-Z^Cu \\
+Z^Cu \\\\
 Z^Cv 
 \end{bmatrix}
 $$
 
+.
 
 $$
 \begin{bmatrix}
-f_x & 0 & u_0 \\
-0 & f_y & v_0 \\
+f_x & 0 & u_0 \\\\
+0 & f_y & v_0 \\\\
 0 & 0 & 1
 \end{bmatrix}
 \begin{bmatrix}
-X^C \\
-Y^C \\
+X^C \\\\
+Y^C \\\\
 Z^C
 \end{bmatrix}
 =
 \begin{bmatrix}
-Z^Cu \\
-Z^Cv \\
+Z^Cu \\\\
+Z^Cv \\\\
 Z^C
 \end{bmatrix}
 $$
@@ -240,20 +242,20 @@ $$
 
 $$
 \begin{bmatrix}
-r_{11} & r_{12} & r_{13} & t_x \\
-r_{21} & r_{22} & r_{23} & t_y \\
+r_{11} & r_{12} & r_{13} & t_x \\\\
+r_{21} & r_{22} & r_{23} & t_y \\\\
 r_{31} & r_{32} & r_{33} & t_z 
 \end{bmatrix}
 \begin{bmatrix}
-X^W \\
-Y^W \\
-Z^W \\
+X^W \\\\
+Y^W \\\\
+Z^W \\\\
 1
 \end{bmatrix}
 =
 \begin{bmatrix}
-X^C \\
-Y^C \\
+X^C \\\\
+Y^C \\\\
 Z^C 
 \end{bmatrix}
 $$
@@ -270,6 +272,7 @@ $$
 좌표계를 한 방향으로 변환하는 것은 객체의 좌표를 역방향으로 변환하는 것과 같다.
 다르게 말하면, 만약 우리에게 좌표계가 어떻게 변하는지 알려주는 변환 행렬이 있다면,
 그것의 역행렬은 객체의 좌표가 어떻게 변하는지를 알려준다.
+
 
 ## 외부 파라미터 행렬(Extrinsic Matrix) 계속
 
