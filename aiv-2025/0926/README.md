@@ -119,7 +119,7 @@ B-rep(Boundary Representation) 모델을 완성함
 - B-rep 모델: 완벽한 기하학적 정보(Geometry), 명확한 위상적 관계(Topology),
 즉시 편집 가능한 Parametric 특성
 
-![point2cad-03](./imgs/point2cad-03.png)
+![point2cad-03](./imgs/point2cad-07.png)
 
 ## Workflow Summary
 
