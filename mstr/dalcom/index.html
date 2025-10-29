@@ -3,20 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>이미지 측정 데모</title>
+    <title>이미지 측정 데모 (v2)</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <h1>이미지 치수 측정</h1>
-      <p>가슴둘레, 허리둘레를 측정할 이미지를 업로드하세요.</p>
+      <h1>이미지 치수 측정 (v2)</h1>
 
-      <input type="file" id="imageUploader" accept="image/*" />
+      <div class="upload-grid">
+        <label for="imageFront">정면 이미지:</label>
+        <input type="file" id="imageFront" accept="image/*" />
+
+        <label for="depthFront">정면 Depth:</label>
+        <input type="file" id="depthFront" />
+
+        <label for="imageSide">측면 이미지:</label>
+        <input type="file" id="imageSide" accept="image/*" />
+
+        <label for="depthSide">측면 Depth:</label>
+        <input type="file" id="depthSide" />
+      </div>
+
+      <button id="submitButton">측정 시작</button>
 
       <div id="loader" class="loader" style="display: none"></div>
 
       <div id="resultContainer" style="display: none">
-        <img id="previewImage" src="" alt="업로드된 이미지" />
+        <img id="previewImage" src="" alt="업로드된 정면 이미지" />
         <div id="measurementsOverlay"></div>
       </div>
     </div>

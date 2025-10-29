@@ -11,8 +11,11 @@ app = FastAPI()
 origins = [
     "https://yonghaklee.github.io",  # 👈 실제 GitHub Pages 주소
     "http://127.0.0.1:5500",  # 👈 로컬 테스트용 (VSCode Live Server)
+    "http://localhost:5500",
     "null",  # 👈 로컬 file_//... 에서 테스트용
 ]
+
+# origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,56 +29,58 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    # 서버가 살아있는지 확인하는 용도
     return {"status": "Model server is running"}
 
 
 @app.post("/measure")
-async def measure_dimensions(file: UploadFile = File(...)):
+async def measure_dimensions(
+    # 1. 이제 4개의 파일을 입력으로 받습니다.
+    image_front: UploadFile = File(...),
+    depth_front: UploadFile = File(...),
+    image_side: UploadFile = File(...),
+    depth_side: UploadFile = File(...),
+):
     """
-    이미지 파일을 받아 치수를 계산하고 JSON을 반환하는 API
-    'file'이라는 이름으로 이미지를 받아야 합니다.
+    정면/측면 이미지와 Depth 파일 총 4개를 받아 치수를 계산합니다.
     """
 
     # --- 여기에 실제 모델 처리 로직을 넣으세요 ---
-    # 1. 업로드된 파일(file)을 Pillow나 OpenCV로 읽기
-    #    contents = await file.read()
-    #    image = Image.open(io.BytesIO(contents))
+    # 1. 4개의 파일을 읽기 (예: await image_front.read())
+    # 2. 모델 실행
 
-    # 2. 이미지와 Depth 데이터로 모델 실행
-    #    ...
+    # 3. (중요!) 모델이 이미지 크기에 맞춰 *퍼센트 좌표*를 계산
+    #    예: 가슴둘레 선의 시작점 (x=216, y=432)
+    #        원본 이미지 크기 (width=1080, height=1920)
+    #        -> x_pct = (216 / 1080) * 100 = 20%
+    #        -> y_pct = (432 / 1920) * 100 = 22.5%
+    # ---------------------------------------------
 
-    # 3. 결과 JSON 생성
-    #    ...
-
-    # --- (시뮬레이션) 모델이 2초간 작동한다고 가정 ---
+    # (시뮬레이션) 모델이 2초간 작동한다고 가정
     await asyncio.sleep(2)
 
-    # (시뮬레이션) 모델이 반환한 가짜(Mock) 데이터
+    # 2. 반환되는 JSON 형식 업데이트 (좌표가 %로 제공됨)
     mock_data = {
         "chest": {
             "value": 118.68,
             "unit": "cm",
-            "position": {"x_percent": 50, "y_percent": 35},
-            "line": {
-                "y_percent": 40,
-                "start_x_percent": 20,
-                "end_x_percent": 80,
-            },
+            # 텍스트 박스의 위치 (% 좌표)
+            "text_position": {"x_pct": 50, "y_pct": 35},
+            # (곡)선을 그릴 두 개의 점 (% 좌표)
+            "line_points_pct": [
+                {"x_pct": 20, "y_pct": 40},
+                {"x_pct": 80, "y_pct": 40},
+            ],
         },
         "waist": {
             "value": 108.99,
             "unit": "cm",
-            "position": {"x_percent": 50, "y_percent": 55},
-            "line": {
-                "y_percent": 60,
-                "start_x_percent": 25,
-                "end_x_percent": 75,
-            },
+            "text_position": {"x_pct": 50, "y_pct": 55},
+            "line_points_pct": [
+                {"x_pct": 25, "y_pct": 60},
+                {"x_pct": 75, "y_pct": 60},
+            ],
         },
     }
-    # ---------------------------------------------
-
     return mock_data
 
 

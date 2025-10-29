@@ -1,14 +1,13 @@
-/* 기본 폰트 및 배경 설정 */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
     background-color: #f0f2f5;
     color: #333;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* 맨 위부터 시작 */
     min-height: 100vh;
     margin: 0;
-    padding: 1rem;
+    padding: 2rem;
     box-sizing: border-box;
 }
 
@@ -22,30 +21,45 @@ body {
     text-align: center;
 }
 
-/* 파일 업로더 */
-#imageUploader {
-    margin-top: 1rem;
+/* --- 1. 파일 업로더 스타일 --- */
+.upload-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    text-align: left;
+    margin-top: 1.5rem;
+    align-items: center;
+}
+.upload-grid label {
+    font-weight: 500;
+}
+
+/* --- 1. 전송 버튼 스타일 --- */
+#submitButton {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
     font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 2rem;
+    transition: background-color 0.2s;
+}
+#submitButton:hover {
+    background-color: #0056b3;
+}
+#submitButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
-/* 로딩 스피너 */
-.loader {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 2rem auto;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 
-/* --- "예쁘게" 만드는 핵심 --- */
+/* 로딩 스피너 (동일) */
+.loader { ... }
 
-/* 결과 표시 영역 (이미지와 오버레이를 겹침) */
+/* 결과 표시 영역 (동일) */
 #resultContainer {
     position: relative; 
     margin-top: 2rem;
@@ -54,14 +68,10 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-
-/* 원본 이미지 */
 #previewImage {
     width: 100%;
     display: block; 
 }
-
-/* 측정값 오버레이 영역 */
 #measurementsOverlay {
     position: absolute; 
     top: 0;
@@ -70,14 +80,14 @@ body {
     height: 100%;
 }
 
-/* "예쁜" 측정값 텍스트 박스 */
+/* "예쁜" 텍스트 박스 (동일) */
 .measurement-box {
     position: absolute;
     transform: translateX(-50%); 
-    background-color: rgba(0, 0, 0, 0.65); /* 반투명 배경 */
+    background-color: rgba(0, 0, 0, 0.65);
     color: white;
     padding: 8px 14px;
-    border-radius: 20px; /* 둥근 모서리 */
+    border-radius: 20px;
     font-size: 14px;
     font-weight: 500;
     white-space: nowrap; 
@@ -85,10 +95,18 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* "예쁜" 측정값 선 */
-.measurement-line {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.9);
-    height: 2px; 
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+/* --- 3. "예쁜" 곡선 스타일 (SVG Path) --- */
+.measurement-curve {
+    fill: none;
+    stroke: #FFD700; /* 눈에 띄는 황금색 (예시) */
+    stroke-width: 4px; /* 선 두께 더 두껍게 */
+    
+    /* 점선 패턴 조정 (예시: 10px 선, 10px 공백) */
+    stroke-dasharray: 10 10; 
+    
+    /* 선 끝을 둥글게 (선택 사항) */
+    stroke-linecap: round;
+    
+    /* 그림자 효과 강화 (동일) */
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.7)); 
 }
