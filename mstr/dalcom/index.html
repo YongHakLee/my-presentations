@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>이미지 측정 데모</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>이미지 치수 측정</h1>
+      <p>가슴둘레, 허리둘레를 측정할 이미지를 업로드하세요.</p>
+
+      <input type="file" id="imageUploader" accept="image/*" />
+
+      <div id="loader" class="loader" style="display: none"></div>
+
+      <div id="resultContainer" style="display: none">
+        <img id="previewImage" src="" alt="업로드된 이미지" />
+        <div id="measurementsOverlay"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
