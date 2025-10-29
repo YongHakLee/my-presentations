@@ -8,7 +8,7 @@ A collection of presentation materials using reveal.js.
 git clone --recurse-submodules https://github.com/YongHakLee/my-presentations.git
 ```
 
-## Update
+## Update Reveal.js
 
 ```bash
 
