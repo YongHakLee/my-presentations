@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import {
   Card,
   CardHeader,
@@ -69,6 +70,17 @@ const colorStyles: Record<string, string> = {
   blue: 'from-semantic-blue/20 to-semantic-blue/5',
   green: 'from-semantic-green/20 to-semantic-green/5',
   orange: 'from-semantic-orange/20 to-semantic-orange/5',
+};
+
+// 페이지 메타데이터 설정
+export const metadata: Metadata = {
+  title: 'My Presentations | 프레젠테이션 라이브러리',
+  description: '연구 및 프로젝트 프레젠테이션 컬렉션을 한눈에 확인하세요',
+  openGraph: {
+    title: 'My Presentations',
+    description: '연구 및 프로젝트 프레젠테이션 컬렉션을 한눈에 확인하세요',
+    type: 'website',
+  },
 };
 
 export default function HomePage() {
