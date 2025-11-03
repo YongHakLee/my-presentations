@@ -5,8 +5,8 @@ import {
   CardContent,
   Typography,
   Badge,
-  Button,
 } from '@/lib/ui';
+import { cn } from '@/lib/utils/cn';
 
 // 프레젠테이션 데이터 구조
 interface Presentation {
@@ -101,15 +101,23 @@ export default function HomePage() {
                           {presentation.description}
                         </Typography>
                       )}
-                      <Button
-                        variant="primary"
-                        fullWidth
-                        asChild
+                      <a
+                        href={presentation.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          'font-regular font-medium border-0 cursor-pointer',
+                          'transition-all duration-150 ease-out',
+                          'inline-flex items-center justify-center gap-2',
+                          'focus-visible:outline-none focus-visible:ring-2',
+                          'focus-visible:ring-semantic-indigo focus-visible:ring-offset-2',
+                          'bg-semantic-indigo text-primary-white',
+                          'hover:opacity-90 active:opacity-80',
+                          'px-4 py-2 text-regular rounded-medium min-h-[44px] w-full'
+                        )}
                       >
-                        <a href={presentation.path} target="_blank" rel="noopener noreferrer">
-                          프레젠테이션 보기
-                        </a>
-                      </Button>
+                        프레젠테이션 보기
+                      </a>
                     </CardContent>
                   </Card>
                 ))}
