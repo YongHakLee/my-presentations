@@ -29,7 +29,7 @@ const Footer = React.forwardRef<HTMLElement, FooterProps>(
       description,
       sections = [],
       socialLinks = [],
-      copyright = `© ${new Date().getFullYear()} CodeFactory. All rights reserved.`,
+      copyright = `© ${new Date().getFullYear()} All rights reserved.`,
       ...props
     },
     ref
@@ -48,9 +48,9 @@ const Footer = React.forwardRef<HTMLElement, FooterProps>(
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             {/* Logo and Description */}
             <div className="space-y-4">
-              {logo || (
+              {logo !== undefined ? logo : (
                 <Typography variant="title3" weight="bold" className="text-primary-text">
-                  CodeFactory
+                  My Presentations
                 </Typography>
               )}
               {description && (

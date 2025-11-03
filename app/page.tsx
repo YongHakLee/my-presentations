@@ -1,285 +1,338 @@
-import type { Metadata } from 'next';
+'use client';
+
 import {
+  Hero,
   Card,
   CardHeader,
   CardTitle,
   CardContent,
+  CardImage,
   Typography,
   Badge,
+  Footer,
+  Input,
+  Button,
 } from '@/lib/ui';
-import { cn } from '@/lib/utils/cn';
+import Link from 'next/link';
+import { useState, useMemo } from 'react';
 
-// 프레젠테이션 데이터 구조
-interface Presentation {
-  id: string;
-  title: string;
-  date: string;
-  category: string;
-  path: string;
-  description?: string;
-  color?: string;
-}
+// basePath를 고려한 경로 헬퍼
+// Link 컴포넌트는 basePath를 자동으로 추가하지만, img src는 수동으로 추가해야 함
+const basePath = process.env.NODE_ENV === 'production' ? '/my-presentations' : '';
 
-// 프레젠테이션 목록
-const presentations: Presentation[] = [
+// 프레젠테이션 데이터
+const presentations = [
   {
     id: 'aiv-2025-0926',
-    title: '2025-09-29 AI 바우처 현장방문',
+    title: 'AI 바우처 현장방문',
     date: '2025-09-29',
-    category: 'aiv-2025',
-    path: '/my-presentations/aiv-2025/0926/index.html',
-    description: '데이터 수집 및 정제 작업, PointNet과 Point2CAD에 관한 프레젠테이션',
-    color: 'indigo',
+    category: 'AI 바우처',
+    description: 'PointNet과 Point2CAD를 활용한 3D 데이터 수집 및 정제 작업',
+    topics: [
+      'PointNet 핵심 아이디어와 아키텍처',
+      'Point2CAD 파이프라인 및 워크플로우',
+      '성능 지표 및 정확도 평가',
+    ],
+    path: '/aiv-2025/0926/index.html', // Link는 basePath 자동 추가
+    thumbnail: `${basePath}/aiv-2025/0926/imgs/pointnet-01.png`, // img는 수동 추가
+    color: 'indigo' as const,
   },
   {
     id: 'lab-meeting-250917',
-    title: '2025-09-17 Lab Meeting: Camera Matrix',
+    title: 'Camera Matrix',
     date: '2025-09-17',
-    category: 'lab-meetings',
-    path: '/my-presentations/lab-meetings/250917/index.html',
-    description: '카메라 행렬(Camera Matrix)에 관한 프레젠테이션',
-    color: 'blue',
+    category: 'Lab Meeting',
+    description: '카메라 행렬과 핀홀 카메라 모델에 대한 이해',
+    topics: [
+      'Intrinsic Matrix 개념 및 수식',
+      'Extrinsic Matrix와 좌표 변환',
+      '동차 좌표계 활용',
+    ],
+    path: '/lab-meetings/250917/index.html', // Link는 basePath 자동 추가
+    thumbnail: `${basePath}/lab-meetings/250917/imgs/pinhole_camera.png`, // img는 수동 추가
+    color: 'green' as const,
   },
-].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+];
 
-const categoryLabels: Record<string, string> = {
-  'aiv-2025': 'AI 바우처',
-  'lab-meetings': 'Lab Meetings',
-};
+const categories = ['전체', ...Array.from(new Set(presentations.map((p) => p.category)))];
 
-const badgeVariants: Record<string, 'indigo' | 'blue' | 'green' | 'orange'> = {
-  'aiv-2025': 'indigo',
-  'lab-meetings': 'blue',
-};
-
-// 페이지 메타데이터 설정
-export const metadata: Metadata = {
-  title: 'My Presentations | 프레젠테이션 라이브러리',
-  description: '연구 및 프로젝트 프레젠테이션 컬렉션을 한눈에 확인하세요',
-  openGraph: {
-    title: 'My Presentations',
-    description: '연구 및 프로젝트 프레젠테이션 컬렉션을 한눈에 확인하세요',
-    type: 'website',
-  },
-};
+type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc';
 
 export default function HomePage() {
-  // 날짜별로 그룹화
-  const groupedByDate = presentations.reduce(
-    (acc, presentation) => {
-      const yearMonth = presentation.date.substring(0, 7); // YYYY-MM
-      if (!acc[yearMonth]) {
-        acc[yearMonth] = [];
-      }
-      acc[yearMonth].push(presentation);
-      return acc;
-    },
-    {} as Record<string, Presentation[]>
-  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [sortBy, setSortBy] = useState<SortOption>('date-desc');
 
-  const sortedDates = Object.keys(groupedByDate).sort().reverse();
+  // 필터링 및 정렬된 프레젠테이션
+  const filteredAndSortedPresentations = useMemo(() => {
+    let filtered = presentations;
+
+    // 카테고리 필터
+    if (selectedCategory !== '전체') {
+      filtered = filtered.filter((p) => p.category === selectedCategory);
+    }
+
+    // 검색 필터
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (p) =>
+          p.title.toLowerCase().includes(query) ||
+          p.description.toLowerCase().includes(query) ||
+          p.topics.some((topic) => topic.toLowerCase().includes(query))
+      );
+    }
+
+    // 정렬
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'date-desc':
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        case 'date-asc':
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        case 'title-asc':
+          return a.title.localeCompare(b.title);
+        case 'title-desc':
+          return b.title.localeCompare(a.title);
+        default:
+          return 0;
+      }
+    });
+
+    return sorted;
+  }, [searchQuery, selectedCategory, sortBy]);
 
   return (
-    <div className="min-h-screen bg-primary-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-primary-text/10 bg-primary-background/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="flex items-baseline justify-between gap-4">
-            <div>
-              <Typography as="h1" variant="title3" weight="bold" className="mb-2">
-                My Presentations
+    <main className="min-h-screen bg-gradient-to-b from-primary-bg to-secondary-bg">
+      {/* Hero Section */}
+      <Hero
+        title="My Presentations"
+        subtitle="프레젠테이션 모음집"
+        description="연구 발표 및 학습 자료를 한곳에서 확인하세요"
+        size="large"
+        align="center"
+      />
+
+      {/* Presentations Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Search and Filter Controls */}
+        <div className="mb-12 space-y-6">
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <Input
+              type="search"
+              placeholder="프레젠테이션 검색... (제목, 설명, 주요 내용)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              fullWidth
+            />
+          </div>
+
+          {/* Category Filter and Sort */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Category Badges */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Typography variant="small" weight="semibold" color="muted">
+                카테고리:
               </Typography>
-              <Typography variant="regular" color="muted">
-                연구 및 프로젝트 프레젠테이션 컬렉션
-              </Typography>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === category
+                      ? 'bg-primary-accent text-white'
+                      : 'bg-secondary-bg text-secondary-text hover:bg-tertiary-bg'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <Typography variant="title5" weight="bold">
-                  {presentations.length}
-                </Typography>
-                <Typography variant="mini" color="muted">
-                  프레젠테이션
-                </Typography>
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2">
+              <Typography variant="small" weight="semibold" color="muted">
+                정렬:
+              </Typography>
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="appearance-none px-4 py-2 pr-10 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-accent transition-all cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgb(31, 33, 36)',
+                    borderColor: 'rgb(55, 58, 64)',
+                    color: 'rgb(220, 225, 230)',
+                  }}
+                >
+                  <option 
+                    value="date-desc"
+                    style={{
+                      backgroundColor: 'rgb(31, 33, 36)',
+                      color: 'rgb(220, 225, 230)',
+                    }}
+                  >
+                    최신순
+                  </option>
+                  <option 
+                    value="date-asc"
+                    style={{
+                      backgroundColor: 'rgb(31, 33, 36)',
+                      color: 'rgb(220, 225, 230)',
+                    }}
+                  >
+                    오래된순
+                  </option>
+                  <option 
+                    value="title-asc"
+                    style={{
+                      backgroundColor: 'rgb(31, 33, 36)',
+                      color: 'rgb(220, 225, 230)',
+                    }}
+                  >
+                    제목순 (A-Z)
+                  </option>
+                  <option 
+                    value="title-desc"
+                    style={{
+                      backgroundColor: 'rgb(31, 33, 36)',
+                      color: 'rgb(220, 225, 230)',
+                    }}
+                  >
+                    제목순 (Z-A)
+                  </option>
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </header>
 
-      {/* Main Content - Timeline Style */}
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        {/* Timeline Container */}
-        <div className="relative">
-          {/* Timeline Line */}
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-semantic-indigo/20 via-semantic-blue/20 to-transparent hidden md:block" />
-
-          {/* Presentations by Date */}
-          <div className="space-y-16">
-            {sortedDates.map((yearMonth, dateIndex) => {
-              const monthPresentations = groupedByDate[yearMonth];
-              const [year, month] = yearMonth.split('-');
-              const monthNames = [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
-              ];
-              const monthName = monthNames[parseInt(month) - 1];
-
-              return (
-                <div key={yearMonth} className="relative">
-                  {/* Date Header */}
-                  <div className="flex items-center gap-6 mb-8">
-                    <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-br from-semantic-indigo/20 to-semantic-blue/20 border-2 border-semantic-indigo/30 flex items-center justify-center backdrop-blur-sm hidden md:flex">
-                      <div className="w-3 h-3 rounded-full bg-semantic-indigo" />
-                    </div>
-                    <div>
-                      <Typography variant="title4" weight="bold" className="mb-1">
-                        {monthName} {year}
-                      </Typography>
-                      <Typography variant="small" color="muted">
-                        {monthPresentations.length} presentation{monthPresentations.length > 1 ? 's' : ''}
-                      </Typography>
-                    </div>
-                  </div>
-
-                  {/* Presentations List */}
-                  <div className="space-y-6 ml-0 md:ml-24">
-                    {monthPresentations.map((presentation, index) => (
-                      <div
-                        key={presentation.id}
-                        className={cn(
-                          'group relative',
-                          'transition-all duration-300',
-                          'hover:translate-x-2'
-                        )}
-                      >
-                        <Card
-                          variant="outlined"
-                          padding="large"
-                          className={cn(
-                            'relative overflow-hidden',
-                            'border-primary-text/10',
-                            'hover:border-primary-text/20',
-                            'transition-all duration-300',
-                            'bg-primary-background/50 backdrop-blur-sm',
-                            'hover:shadow-xl hover:shadow-semantic-indigo/10'
-                          )}
-                        >
-                          {/* Left Border Accent */}
-                          <div
-                            className={cn(
-                              'absolute left-0 top-0 bottom-0 w-1',
-                              'opacity-60 group-hover:opacity-100',
-                              'transition-opacity duration-300',
-                              presentation.category === 'aiv-2025' && 'bg-semantic-indigo',
-                              presentation.category === 'lab-meetings' && 'bg-semantic-blue'
-                            )}
-                          />
-
-                          {/* Content */}
-                          <div className="pl-6">
-                            <CardHeader className="pb-3">
-                              <div className="flex items-start justify-between gap-4 mb-3">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <Badge
-                                      variant={badgeVariants[presentation.category] || 'indigo'}
-                                      size="small"
-                                    >
-                                      {categoryLabels[presentation.category]}
-                                    </Badge>
-                                    <Typography variant="mini" color="muted">
-                                      {presentation.date}
-                                    </Typography>
-                                  </div>
-                                  <CardTitle className="text-left leading-tight mb-2 group-hover:text-semantic-indigo transition-colors duration-300">
-                                    {presentation.title}
-                                  </CardTitle>
-                                </div>
-                              </div>
-                            </CardHeader>
-
-                            <CardContent className="space-y-4">
-                              {presentation.description && (
-                                <Typography
-                                  variant="regular"
-                                  color="muted"
-                                  className="leading-relaxed"
-                                >
-                                  {presentation.description}
-                                </Typography>
-                              )}
-
-                              <div className="flex items-center gap-3 pt-2">
-                                <a
-                                  href={presentation.path}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={cn(
-                                    'group/btn inline-flex items-center gap-2',
-                                    'font-regular font-medium',
-                                    'px-6 py-3 rounded-lg',
-                                    'bg-semantic-indigo text-primary-white',
-                                    'hover:opacity-90 active:opacity-80',
-                                    'transition-all duration-200',
-                                    'focus-visible:outline-none focus-visible:ring-2',
-                                    'focus-visible:ring-semantic-indigo focus-visible:ring-offset-2',
-                                    'shadow-lg shadow-semantic-indigo/20 hover:shadow-xl hover:shadow-semantic-indigo/30'
-                                  )}
-                                >
-                                  <span>View Presentation</span>
-                                  <svg
-                                    className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth={2.5}
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                                    />
-                                  </svg>
-                                </a>
-                              </div>
-                            </CardContent>
-                          </div>
-                        </Card>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+          {/* Results Count */}
+          <div className="text-center">
+            <Typography variant="regular" color="muted">
+              {filteredAndSortedPresentations.length}개의 프레젠테이션
+              {searchQuery && ` (검색: "${searchQuery}")`}
+            </Typography>
           </div>
         </div>
 
-        {/* Empty State (if no presentations) */}
-        {presentations.length === 0 && (
-          <div className="text-center py-24">
-            <Typography variant="title5" weight="medium" color="muted" className="mb-4">
-              No presentations yet
+        {/* Presentations Grid */}
+        {filteredAndSortedPresentations.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {filteredAndSortedPresentations.map((presentation) => (
+              <Link
+                key={presentation.id}
+                href={presentation.path}
+                className="group animate-fade-in-up"
+              >
+                <Card
+                  variant="outlined"
+                  padding="none"
+                  className="h-full transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:border-primary-accent overflow-hidden"
+                >
+                  {/* Thumbnail Image */}
+                  <CardImage
+                    src={presentation.thumbnail}
+                    alt={presentation.title}
+                    aspectRatio="video"
+                    className="group-hover:scale-105 transition-transform duration-300"
+                  />
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <CardTitle as="h3" className="group-hover:text-primary-accent transition-colors">
+                          {presentation.title}
+                        </CardTitle>
+                        <Badge variant={presentation.color} dot>
+                          {presentation.category}
+                        </Badge>
+                      </div>
+                      <Typography variant="small" color="muted">
+                        📅 {presentation.date}
+                      </Typography>
+                    </CardHeader>
+
+                    <CardContent>
+                      <Typography variant="regular" className="mb-4 line-clamp-2">
+                        {presentation.description}
+                      </Typography>
+
+                      <div className="space-y-2">
+                        <Typography
+                          variant="small"
+                          weight="semibold"
+                          color="muted"
+                        >
+                          📌 주요 내용:
+                        </Typography>
+                        <ul className="space-y-1.5">
+                          {presentation.topics.map((topic, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <span className="text-primary-accent mt-1 flex-shrink-0">•</span>
+                              <Typography variant="small" color="muted" className="line-clamp-1">
+                                {topic}
+                              </Typography>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="mt-6 flex items-center gap-2 text-primary-accent group-hover:gap-3 transition-all">
+                        <Typography
+                          variant="small"
+                          weight="semibold"
+                          color="accent"
+                        >
+                          프레젠테이션 보기
+                        </Typography>
+                        <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                      </div>
+                    </CardContent>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">🔍</div>
+            <Typography variant="title6" weight="semibold" className="mb-2">
+              검색 결과가 없습니다
             </Typography>
             <Typography variant="regular" color="muted">
-              Presentations will appear here when added.
+              다른 키워드로 검색해보세요
             </Typography>
+            {(searchQuery || selectedCategory !== '전체') && (
+              <Button
+                variant="outline"
+                size="medium"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('전체');
+                }}
+                className="mt-4"
+              >
+                필터 초기화
+              </Button>
+            )}
           </div>
         )}
+      </section>
 
-        {/* Footer */}
-        <footer className="mt-24 pt-12 border-t border-primary-text/10">
-          <div>
-            <Typography variant="regular" weight="semibold" className="mb-1">
-              총 {presentations.length}개의 프레젠테이션
-            </Typography>
-            <Typography variant="small" color="muted">
-              지속적으로 업데이트 중
-            </Typography>
-          </div>
-        </footer>
-      </main>
-    </div>
+      {/* Footer */}
+      <Footer
+        logo={null}
+        description="연구 발표 및 학습 자료 아카이브"
+        copyright="© 2025 All rights reserved."
+      />
+    </main>
   );
 }
 
