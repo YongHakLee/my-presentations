@@ -85,58 +85,126 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-primary-background">
+    <div className="min-h-screen bg-primary-background relative">
       {/* Hero Section */}
       <Hero
         title="My Presentations"
         subtitle="프레젠테이션 라이브러리"
         description="연구 및 프로젝트 프레젠테이션 컬렉션을 한눈에 확인하세요"
-        size="medium"
+        size="large"
         align="center"
         className="relative overflow-hidden"
       >
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-semantic-indigo/10 via-primary-background to-semantic-blue/10 pointer-events-none" />
+        {/* Enhanced Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-semantic-indigo/20 via-primary-background via-semantic-blue/10 to-primary-background pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-background/80 via-transparent to-transparent pointer-events-none" />
         
-        {/* Animated Grid Pattern */}
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px',
-          }} />
+        {/* Animated Grid Pattern - 더 세밀하게 */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+          <div 
+            className="absolute inset-0" 
+            style={{
+              backgroundImage: `linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)`,
+              backgroundSize: '40px 40px',
+              animation: 'grid-move 20s linear infinite',
+            }} 
+          />
         </div>
+
+        {/* Floating Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-semantic-indigo/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-semantic-blue/10 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
       </Hero>
 
       {/* Main Content */}
       <div className="max-w-[var(--layout-page-max-width)] mx-auto p-[var(--spacing-page-padding-inline)] py-[var(--spacing-page-padding-block)]">
+        {/* Statistics Section */}
+        <div className="mb-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="relative overflow-hidden rounded-lg border border-primary-text/10 bg-gradient-to-br from-semantic-indigo/5 to-semantic-indigo/0 p-6 backdrop-blur-sm transition-all hover:border-semantic-indigo/30 hover:shadow-lg hover:shadow-semantic-indigo/10">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-semantic-indigo/20 flex items-center justify-center">
+                <span className="text-2xl">📊</span>
+              </div>
+              <div>
+                <Typography variant="small" color="muted" className="mb-1">
+                  총 프레젠테이션
+                </Typography>
+                <Typography variant="title4" weight="bold">
+                  {presentations.length}개
+                </Typography>
+              </div>
+            </div>
+          </div>
+          
+          <div className="relative overflow-hidden rounded-lg border border-primary-text/10 bg-gradient-to-br from-semantic-blue/5 to-semantic-blue/0 p-6 backdrop-blur-sm transition-all hover:border-semantic-blue/30 hover:shadow-lg hover:shadow-semantic-blue/10">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-semantic-blue/20 flex items-center justify-center">
+                <span className="text-2xl">📁</span>
+              </div>
+              <div>
+                <Typography variant="small" color="muted" className="mb-1">
+                  카테고리
+                </Typography>
+                <Typography variant="title4" weight="bold">
+                  {Object.keys(groupedPresentations).length}개
+                </Typography>
+              </div>
+            </div>
+          </div>
+          
+          <div className="relative overflow-hidden rounded-lg border border-primary-text/10 bg-gradient-to-br from-semantic-green/5 to-semantic-green/0 p-6 backdrop-blur-sm transition-all hover:border-semantic-green/30 hover:shadow-lg hover:shadow-semantic-green/10">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-semantic-green/20 flex items-center justify-center">
+                <span className="text-2xl">✨</span>
+              </div>
+              <div>
+                <Typography variant="small" color="muted" className="mb-1">
+                  최신 업데이트
+                </Typography>
+                <Typography variant="title4" weight="bold">
+                  {presentations[0]?.date || 'N/A'}
+                </Typography>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* 프레젠테이션 목록 */}
-        <div className="space-y-16">
+        <div className="space-y-20">
           {Object.entries(groupedPresentations).map(([category, items], categoryIndex) => (
             <section 
               key={category} 
-              className="space-y-6 animate-fade-in-up"
+              className="space-y-8 animate-fade-in-up"
               style={{
                 animationDelay: `${categoryIndex * 0.1}s`,
               }}
             >
-              {/* Category Header */}
-              <div className="flex items-center gap-3">
-                <span className="text-4xl" role="img" aria-label={category}>
-                  {categoryIcons[category] || '📄'}
-                </span>
-                <div>
-                  <Typography as="h2" variant="title3" weight="bold">
-                    {categoryLabels[category] || category}
-                  </Typography>
-                  <Typography variant="small" color="muted">
-                    {items.length}개의 프레젠테이션
-                  </Typography>
+              {/* Enhanced Category Header */}
+              <div className="relative">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-semantic-indigo/20 to-semantic-blue/20 rounded-xl blur-xl opacity-50" />
+                    <div className="relative w-16 h-16 rounded-xl bg-gradient-to-br from-semantic-indigo/10 to-semantic-blue/10 border border-semantic-indigo/20 flex items-center justify-center text-4xl backdrop-blur-sm">
+                      {categoryIcons[category] || '📄'}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-baseline gap-3">
+                      <Typography as="h2" variant="title2" weight="bold" className="mb-1">
+                        {categoryLabels[category] || category}
+                      </Typography>
+                      <Badge variant="indigo" size="small">
+                        {items.length}개
+                      </Badge>
+                    </div>
+                    <div className="h-1 w-20 bg-gradient-to-r from-semantic-indigo to-semantic-blue rounded-full mt-2" />
+                  </div>
                 </div>
               </div>
 
-              {/* Presentation Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Enhanced Presentation Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {items.map((presentation, index) => (
                   <Card
                     key={presentation.id}
@@ -145,90 +213,115 @@ export default function HomePage() {
                     className={cn(
                       'group relative overflow-hidden',
                       'hover:border-semantic-indigo/50',
-                      'hover:shadow-lg hover:shadow-semantic-indigo/10',
-                      'transition-all duration-300 ease-out',
-                      'transform hover:-translate-y-1',
-                      'animate-fade-in-up'
+                      'hover:shadow-2xl hover:shadow-semantic-indigo/20',
+                      'transition-all duration-500 ease-out',
+                      'transform hover:-translate-y-2',
+                      'backdrop-blur-sm',
+                      'animate-fade-in-up',
+                      'border-primary-text/10'
                     )}
                     style={{
                       animationDelay: `${(categoryIndex * 0.1) + (index * 0.1) + 0.2}s`,
                     }}
                   >
-                    {/* Gradient Background */}
+                    {/* Enhanced Gradient Background */}
                     <div 
                       className={cn(
-                        'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300',
+                        'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500',
                         'bg-gradient-to-br',
                         colorStyles[presentation.color || 'indigo']
                       )}
                     />
                     
+                    {/* Shine Effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                    
                     {/* Content */}
                     <div className="relative z-10">
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-4">
-                          <CardTitle className="flex-1 group-hover:text-semantic-indigo transition-colors">
+                      <CardHeader className="pb-4">
+                        <div className="flex items-start justify-between gap-4 mb-3">
+                          <CardTitle className="flex-1 group-hover:text-semantic-indigo transition-colors duration-300 leading-tight">
                             {presentation.title}
                           </CardTitle>
                           <Badge 
                             variant={presentation.color === 'blue' ? 'blue' : 'indigo'} 
                             size="small"
-                            className="shrink-0"
+                            className="shrink-0 shadow-lg"
                           >
                             {presentation.date}
                           </Badge>
                         </div>
+                        {/* Category Indicator */}
+                        <div className="flex items-center gap-2">
+                          <div className={cn(
+                            'w-2 h-2 rounded-full',
+                            presentation.color === 'blue' ? 'bg-semantic-blue' : 'bg-semantic-indigo'
+                          )} />
+                          <Typography variant="mini" color="muted">
+                            {categoryLabels[presentation.category]}
+                          </Typography>
+                        </div>
                       </CardHeader>
                       
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-6">
                         {presentation.description && (
-                          <Typography 
-                            variant="small" 
-                            color="muted"
-                            className="line-clamp-2"
-                          >
-                            {presentation.description}
-                          </Typography>
+                          <div className="relative">
+                            <Typography 
+                              variant="small" 
+                              color="muted"
+                              className="line-clamp-3 leading-relaxed"
+                            >
+                              {presentation.description}
+                            </Typography>
+                          </div>
                         )}
                         
-                        {/* Button with Arrow */}
+                        {/* Enhanced Button with Arrow */}
                         <a
                           href={presentation.path}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={cn(
-                            'group/button font-regular font-medium border-0 cursor-pointer',
-                            'transition-all duration-200 ease-out',
+                            'group/button relative overflow-hidden',
+                            'font-regular font-medium border-0 cursor-pointer',
+                            'transition-all duration-300 ease-out',
                             'inline-flex items-center justify-center gap-2',
                             'focus-visible:outline-none focus-visible:ring-2',
                             'focus-visible:ring-semantic-indigo focus-visible:ring-offset-2',
-                            'bg-semantic-indigo text-primary-white',
-                            'hover:bg-semantic-indigo/90 hover:scale-105',
-                            'active:scale-95 active:opacity-80',
-                            'px-4 py-2 text-regular rounded-medium min-h-[44px] w-full',
-                            'shadow-md shadow-semantic-indigo/20'
+                            'bg-gradient-to-r from-semantic-indigo to-semantic-blue',
+                            'text-primary-white',
+                            'hover:from-semantic-indigo/90 hover:to-semantic-blue/90',
+                            'hover:scale-[1.02] hover:shadow-xl hover:shadow-semantic-indigo/30',
+                            'active:scale-98',
+                            'px-6 py-3 text-regular rounded-lg min-h-[48px] w-full',
+                            'shadow-lg shadow-semantic-indigo/20'
                           )}
                         >
-                          프레젠테이션 보기
+                          {/* Button Shine Effect */}
+                          <div className="absolute inset-0 opacity-0 group-hover/button:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-200%] group-hover/button:translate-x-[200%] transition-transform duration-1000" />
+                          <span className="relative z-10">프레젠테이션 보기</span>
                           <svg 
-                            className="w-4 h-4 transition-transform duration-200 group-hover/button:translate-x-1" 
+                            className="relative z-10 w-5 h-5 transition-transform duration-300 group-hover/button:translate-x-1" 
                             fill="none" 
                             stroke="currentColor" 
+                            strokeWidth={2.5}
                             viewBox="0 0 24 24"
                           >
                             <path 
                               strokeLinecap="round" 
                               strokeLinejoin="round" 
-                              strokeWidth={2} 
-                              d="M9 5l7 7-7 7" 
+                              d="M13 7l5 5m0 0l-5 5m5-5H6" 
                             />
                           </svg>
                         </a>
                       </CardContent>
                     </div>
 
-                    {/* Decorative Corner */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-semantic-indigo/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    {/* Enhanced Decorative Corner */}
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-semantic-indigo/10 via-transparent to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    
+                    {/* Corner Accent */}
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-semantic-indigo rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Card>
                 ))}
               </div>
@@ -236,15 +329,39 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Footer Section */}
-        <footer className="mt-20 pt-12 border-t border-primary-text/10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <Typography variant="small" color="muted">
-              총 {presentations.length}개의 프레젠테이션
-            </Typography>
-            <Typography variant="small" color="muted">
-              Powered by Next.js & Reveal.js
-            </Typography>
+        {/* Enhanced Footer Section */}
+        <footer className="mt-24 pt-12 border-t border-primary-text/10 relative">
+          {/* Footer Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-primary-background via-transparent to-transparent pointer-events-none opacity-50" />
+          
+          <div className="relative">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col">
+                  <Typography variant="regular" weight="semibold" className="mb-1">
+                    총 {presentations.length}개의 프레젠테이션
+                  </Typography>
+                  <Typography variant="small" color="muted">
+                    지속적으로 업데이트 중
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-text/5 border border-primary-text/10">
+                  <Typography variant="small" color="muted">
+                    Powered by
+                  </Typography>
+                  <div className="flex items-center gap-2">
+                    <span className="text-semantic-indigo font-semibold">Next.js</span>
+                    <span className="text-primary-text/30">•</span>
+                    <span className="text-semantic-blue font-semibold">Reveal.js</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Decorative Line */}
+            <div className="h-px bg-gradient-to-r from-transparent via-primary-text/10 to-transparent" />
           </div>
         </footer>
       </div>
