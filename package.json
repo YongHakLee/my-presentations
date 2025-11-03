@@ -5,7 +5,7 @@
   "description": "프레젠테이션 바로가기 모음 페이지",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/copy-presentations.js",
     "start": "next start",
     "lint": "next lint",
     "export": "next build && node scripts/copy-presentations.js"
