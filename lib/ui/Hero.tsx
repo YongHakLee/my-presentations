@@ -4,7 +4,7 @@ import { cn } from '../utils/cn';
 import Typography from './Typography';
 import Button from './Button';
 
-export interface HeroProps extends React.HTMLAttributes<HTMLSectionElement> {
+export interface HeroProps extends React.HTMLAttributes<HTMLElement> {
   title: string;
   subtitle?: string;
   description?: string;
@@ -16,7 +16,7 @@ export interface HeroProps extends React.HTMLAttributes<HTMLSectionElement> {
   align?: 'left' | 'center' | 'right';
 }
 
-const Hero = React.forwardRef<HTMLSectionElement, HeroProps>(
+const Hero = React.forwardRef<HTMLElement, HeroProps>(
   (
     {
       className,
