@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary Colors - 부드러운 다크모드 */
+  --color-primary-background: rgb(23, 25, 28);
+  --color-primary-text: rgb(220, 225, 230);
+  --color-primary-white: #fff;
+  --color-primary-black: #000;
+
+  /* Semantic Colors */
+  --color-semantic-blue: #4ea7fc;
+  --color-semantic-red: #eb5757;
+  --color-semantic-green: #4cb782;
+  --color-semantic-orange: #fc7840;
+  --color-semantic-yellow: #f2c94c;
+  --color-semantic-indigo: #5e6ad2;
+  --color-semantic-linearPlan: #68cc58;
+  --color-semantic-linearBuild: #d4b144;
+  --color-semantic-linearSecurity: #7a7fad;
+
+  /* Scrollbar Colors */
+  --color-scrollbar: rgba(255, 255, 255, 0.1);
+  --color-scrollbar-hover: rgba(255, 255, 255, 0.2);
+  --color-scrollbar-active: rgba(255, 255, 255, 0.4);
+
+  /* Focus */
+  --color-focus-ring: var(--color-semantic-indigo);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* Typography - Font Families */
+  --font-family-regular: "Inter Variable", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --font-family-serif: "Tiempos Headline", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-family-mono: "Berkeley Mono", ui-monospace, "SF Mono", "Menlo", monospace;
+  --font-family-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Twemoji Mozilla", "Noto Color Emoji", "Android Emoji";
+
+  /* Typography - Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 510;
+  --font-weight-semibold: 590;
+  --font-weight-bold: 680;
+
+  /* Typography - Font Sizes */
+  --font-size-tiny: 0.625rem;
+  --font-size-micro: 0.6875rem;
+  --font-size-mini: 0.75rem;
+  --font-size-small: 0.8125rem;
+  --font-size-regular: 0.9375rem;
+  --font-size-large: 1.125rem;
+  --font-size-title1: 1.0625rem;
+  --font-size-title2: 1.3125rem;
+  --font-size-title3: 1.5rem;
+  --font-size-title4: 2rem;
+  --font-size-title5: 2.5rem;
+  --font-size-title6: 3rem;
+  --font-size-title7: 3.5rem;
+  --font-size-title8: 4rem;
+  --font-size-title9: 4.5rem;
+
+  /* Typography - Line Heights */
+  --line-height-tight: 1;
+  --line-height-normal: 1.1;
+  --line-height-relaxed: 1.4;
+  --line-height-loose: 1.5;
+  --line-height-extra-loose: 1.6;
+
+  /* Typography - Letter Spacing */
+  --letter-spacing-tight: -0.022em;
+  --letter-spacing-normal: -0.012em;
+  --letter-spacing-relaxed: 0;
+
+  /* Spacing */
+  --spacing-page-padding-inline: 24px;
+  --spacing-page-padding-block: 64px;
+  --spacing-min-tap-size: 44px;
+
+  /* Border Radius */
+  --radius-small: 4px;
+  --radius-medium: 6px;
+  --radius-large: 8px;
+  --radius-xl: 12px;
+  --radius-xxl: 16px;
+  --radius-xxxl: 24px;
+  --radius-huge: 32px;
+  --radius-full: 9999px;
+  --radius-circle: 50%;
+
+  /* Shadows */
+  --shadow-none: 0px 0px 0px transparent;
+  --shadow-tiny: var(--shadow-none);
+  --shadow-low: var(--shadow-none);
+  --shadow-medium: var(--shadow-none);
+  --shadow-high: var(--shadow-none);
+
+  /* Animations - Durations */
+  --duration-quick-transition: 0.1s;
+  --duration-regular-transition: 0.25s;
+  --duration-highlight-fade-in: 0s;
+  --duration-highlight-fade-out: 0.15s;
+
+  /* Animations - Easings */
+  --easing-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --easing-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --easing-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --easing-regular: var(--easing-out-quad);
+
+  /* Layout */
+  --layout-header-height: 64px;
+  --layout-header-blur: 20px;
+  --layout-page-max-width: 1024px;
+  --layout-prose-max-width: 624px;
+  --layout-grid-columns: 12;
+
+  /* Layers */
+  --layer-max: 10000;
+  --layer-debug: 5100;
+  --layer-skip-nav: 5000;
+  --layer-context-menu: 1200;
+  --layer-tooltip: 1100;
+  --layer-toasts: 800;
+  --layer-dialog: 700;
+  --layer-dialog-overlay: 699;
+  --layer-command-menu: 650;
+  --layer-popover: 600;
+  --layer-overlay: 500;
+  --layer-header: 100;
+  --layer-scrollbar: 75;
+  --layer-footer: 50;
+
+  /* Borders */
+  --border-hairline: 1px;
+
+  /* Scrollbar */
+  --scrollbar-size: 6px;
+  --scrollbar-size-active: 10px;
+  --scrollbar-gap: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--color-primary-text);
+  background: var(--color-primary-background);
+  font-family: var(--font-family-regular);
+  font-size: var(--font-size-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--color-scrollbar-active);
+  width: var(--scrollbar-size-active);
+}
+
+/* Focus Styles */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-small);
+}
+

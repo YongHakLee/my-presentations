@@ -1,0 +1,330 @@
+---
+alwaysApply: true
+---
+
+# CodeFactory Component Library Rules
+
+이 프로젝트는 Linear 테마 기반의 재사용 가능한 컴포넌트 라이브러리를 사용합니다.
+모든 컴포넌트는 `@/lib/ui`에서 import하여 사용하세요.
+
+## 컴포넌트 Import 규칙
+
+```typescript
+// 올바른 방법 - 모든 컴포넌트를 한 곳에서 import
+import {
+  Button,
+  Input,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardImage,
+  Badge,
+  Typography,
+  Carousel,
+  Navbar,
+  Footer,
+  Hero,
+} from '@/lib/ui';
+
+// 타입도 함께 import 가능
+import type {
+  ButtonProps,
+  InputProps,
+  CardProps,
+  BadgeProps,
+  TypographyProps,
+  CarouselProps,
+  NavbarProps,
+  FooterProps,
+  HeroProps,
+} from '@/lib/ui';
+```
+
+## 컴포넌트 사용 가이드
+
+### 1. Button (버튼)
+- **사용 위치**: 클릭 가능한 모든 액션에 사용
+- **Props**:
+  - `variant`: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' (기본: 'primary')
+  - `size`: 'small' | 'medium' | 'large' (기본: 'medium')
+  - `fullWidth?: boolean` - 전체 너비 버튼
+  - `isLoading?: boolean` - 로딩 상태 표시
+  - 모든 `button` HTML 속성 상속
+
+```tsx
+<Button variant="primary" size="large" onClick={handleClick}>
+  클릭하기
+</Button>
+```
+
+### 2. Input (입력 필드)
+- **사용 위치**: 모든 텍스트 입력에 사용
+- **Props**:
+  - `label?: string` - 라벨 텍스트
+  - `error?: string` - 에러 메시지
+  - `helperText?: string` - 도움말 텍스트
+  - `fullWidth?: boolean` - 전체 너비 입력
+  - 모든 `input` HTML 속성 상속 (type, placeholder, disabled 등)
+
+```tsx
+<Input
+  label="이메일"
+  type="email"
+  placeholder="example@email.com"
+  error={error}
+  helperText="이메일 주소를 입력하세요"
+  fullWidth
+/>
+```
+
+### 3. Card (카드)
+- **사용 위치**: 컨텐츠 그룹화, 카드 레이아웃에 사용
+- **Props**:
+  - `variant`: 'default' | 'outlined' | 'elevated' (기본: 'default')
+  - `padding`: 'none' | 'small' | 'medium' | 'large' (기본: 'medium')
+  - 모든 `div` HTML 속성 상속
+
+**서브컴포넌트**:
+- `CardHeader`: 카드 헤더 영역
+- `CardTitle`: 카드 제목 (기본 h3, `as` prop으로 변경 가능)
+- `CardContent`: 카드 본문 영역
+- `CardImage`: 카드 이미지 (aspectRatio: 'square' | 'video' | 'wide' | 'auto')
+
+```tsx
+<Card variant="outlined" padding="large">
+  <CardHeader>
+    <CardTitle>제목</CardTitle>
+  </CardHeader>
+  <CardContent>
+    카드 내용
+  </CardContent>
+</Card>
+
+// 이미지와 함께 사용
+<Card variant="outlined" padding="none">
+  <CardImage
+    src="/image.jpg"
+    alt="Description"
+    aspectRatio="video"
+  />
+  <div className="p-4">
+    <CardHeader>
+      <CardTitle>제목</CardTitle>
+    </CardHeader>
+  </div>
+</Card>
+```
+
+### 4. Badge (배지)
+- **사용 위치**: 상태 표시, 태그, 카테고리 표시에 사용
+- **Props**:
+  - `variant`: 'default' | 'blue' | 'green' | 'red' | 'orange' | 'yellow' | 'indigo' (기본: 'default')
+  - `size`: 'small' | 'medium' (기본: 'medium')
+  - `dot?: boolean` - 앞에 점 표시
+
+```tsx
+<Badge variant="green" dot>Active</Badge>
+<Badge variant="blue" size="small">New</Badge>
+```
+
+### 5. Typography (타이포그래피)
+- **사용 위치**: 모든 텍스트에 사용 (기본 HTML 태그 대신)
+- **Props**:
+  - `as`: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' (기본: 'p')
+  - `variant`: 'title1'-'title9' | 'large' | 'regular' | 'small' | 'mini' | 'micro' | 'tiny' (기본: 'regular')
+  - `weight`: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' (기본: 'normal')
+  - `color`: 'default' | 'muted' | 'accent' (기본: 'default')
+  - `align`: 'left' | 'center' | 'right' (기본: 'left')
+  - `fontFamily`: 'regular' | 'serif' | 'mono' (기본: 'regular')
+
+```tsx
+<Typography as="h1" variant="title4" weight="bold" align="center">
+  제목
+</Typography>
+<Typography variant="regular" color="muted">
+  본문 텍스트
+</Typography>
+```
+
+### 6. Carousel (캐러셀)
+- **사용 위치**: 이미지 슬라이더, 콘텐츠 슬라이드에 사용
+- **주의**: 'use client' 컴포넌트이므로 클라이언트 컴포넌트에서만 사용
+- **Props**:
+  - `items: React.ReactNode[]` - 슬라이드 항목 배열 (필수)
+  - `autoPlay?: boolean` - 자동 재생 (기본: false)
+  - `autoPlayInterval?: number` - 자동 재생 간격(ms) (기본: 3000)
+  - `showIndicators?: boolean` - 인디케이터 표시 (기본: true)
+  - `showArrows?: boolean` - 화살표 표시 (기본: true)
+  - `loop?: boolean` - 루프 재생 (기본: true)
+
+```tsx
+'use client';
+import { Carousel } from '@/lib/ui';
+
+<Carousel
+  items={[
+    <div key="1">Slide 1</div>,
+    <div key="2">Slide 2</div>,
+    <div key="3">Slide 3</div>,
+  ]}
+  autoPlay={true}
+  autoPlayInterval={3000}
+  showIndicators={true}
+  showArrows={true}
+  loop={true}
+/>
+```
+
+### 7. Navbar (네비게이션 바)
+- **사용 위치**: 페이지 상단 네비게이션에 사용
+- **주의**: 'use client' 컴포넌트이므로 클라이언트 컴포넌트에서만 사용
+- **Props**:
+  - `logo?: React.ReactNode` - 커스텀 로고
+  - `links?: Array<{ label: string; href: string }>` - 네비게이션 링크
+  - `cta?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'outline' | 'ghost' }` - CTA 버튼
+  - `transparent?: boolean` - 반투명 배경 (기본: false)
+  - `sticky?: boolean` - sticky 위치 (기본: true)
+- **특징**: Full width 컴포넌트, 자동으로 반응형 모바일 메뉴 포함
+
+```tsx
+'use client';
+import { Navbar } from '@/lib/ui';
+
+<Navbar
+  links={[
+    { label: 'Home', href: '/' },
+    { label: 'About', href: '/about' },
+  ]}
+  cta={{ label: 'Get Started', href: '/signup', variant: 'primary' }}
+  transparent={false}
+  sticky={true}
+/>
+```
+
+### 8. Footer (푸터)
+- **사용 위치**: 페이지 하단 푸터에 사용
+- **Props**:
+  - `logo?: React.ReactNode` - 커스텀 로고
+  - `description?: string` - 설명 텍스트
+  - `sections?: FooterSection[]` - 섹션별 링크 그룹
+  - `socialLinks?: Array<{ label: string; href: string; icon?: React.ReactNode }>` - 소셜 링크
+  - `copyright?: string` - 저작권 정보
+
+```tsx
+import { Footer } from '@/lib/ui';
+
+<Footer
+  description="Building modern web applications"
+  sections={[
+    {
+      title: 'Product',
+      links: [
+        { label: 'Features', href: '/features' },
+        { label: 'Pricing', href: '/pricing' },
+      ],
+    },
+  ]}
+  socialLinks={[
+    { label: 'GitHub', href: 'https://github.com' },
+  ]}
+/>
+```
+
+### 9. Hero (히어로 섹션)
+- **사용 위치**: 페이지 최상단 메인 섹션에 사용
+- **Props**:
+  - `title: string` - 메인 제목 (필수)
+  - `subtitle?: string` - 부제목
+  - `description?: string` - 설명
+  - `primaryAction?: { label: string; href?: string; onClick?: () => void }` - 주요 액션 버튼
+  - `secondaryAction?: { label: string; href?: string; onClick?: () => void }` - 보조 액션 버튼
+  - `backgroundImage?: string` - 배경 이미지 URL
+  - `overlay?: boolean` - 배경 오버레이 (기본: false)
+  - `size`: 'small' | 'medium' | 'large' | 'fullscreen' (기본: 'large')
+  - `align`: 'left' | 'center' | 'right' (기본: 'center')
+- **특징**: Full width 컴포넌트
+
+```tsx
+import { Hero } from '@/lib/ui';
+
+<Hero
+  title="Welcome to CodeFactory"
+  subtitle="Premium Design System"
+  description="A comprehensive collection of reusable components"
+  primaryAction={{ label: 'Get Started', href: '/signup' }}
+  secondaryAction={{ label: 'Learn More', href: '/docs' }}
+  size="large"
+  align="center"
+/>
+```
+
+## 스타일링 규칙
+
+### 테마 변수 사용
+- CSS 변수는 `var(--*)` 형태로 사용
+- Tailwind 클래스는 테마 토큰 사용 (예: `text-primary-text`, `bg-semantic-indigo`)
+- 직접 색상값을 사용하지 말고 테마 변수를 사용하세요
+
+### className 합성
+- `cn()` 유틸리티 함수를 사용하여 className 합성
+- `@/lib/utils/cn`에서 import
+
+```tsx
+import { cn } from '@/lib/utils/cn';
+
+<div className={cn('base-class', condition && 'conditional-class')} />
+```
+
+## 새 컴포넌트 생성 규칙
+
+**⚠️ 중요**: 새로운 컴포넌트를 만들기 전에 반드시 다음 정보를 사용자에게 확인하고 승인을 받아야 합니다. 임의로 컴포넌트를 생성하지 마세요.
+
+### 필수 확인 사항
+
+새 컴포넌트가 필요하다고 판단되면, 다음 형식으로 사용자에게 질문하고 승인을 받아야 합니다:
+
+```
+새로운 컴포넌트가 필요한 것 같습니다. 다음 정보를 확인해주세요:
+
+1. **컴포넌트 이름**: [컴포넌트 이름]
+2. **컴포넌트 목적**: [이 컴포넌트가 왜 필요한지, 어떤 문제를 해결하는지]
+3. **사용 위치**: [어디에 사용될지, 어떤 페이지/기능에서 사용되는지]
+4. **기존 컴포넌트 조합 가능 여부**: [기존 컴포넌트(Button, Card, Input 등)로 해결할 수 있는지]
+5. **예상 Props**: [컴포넌트가 받을 props 목록과 타입]
+
+승인해주시면 컴포넌트를 생성하겠습니다.
+```
+
+### 컴포넌트 생성 절차
+
+1. **기존 컴포넌트 검토**: 먼저 기존 컴포넌트로 요구사항을 충족할 수 있는지 확인
+2. **사용자 승인**: 위의 형식으로 정보를 제시하고 승인 요청
+3. **승인 후 생성**: 승인을 받은 후에만 `@/lib/ui` 디렉토리에 컴포넌트 생성
+4. **Export 추가**: 생성 후 `lib/ui/index.ts`에 export 추가
+5. **데모 추가**: 필요시 `/components` 페이지에 데모 추가
+
+### 금지 사항
+
+- ❌ 사용자 승인 없이 임의로 새 컴포넌트 생성
+- ❌ 기존 컴포넌트 조합으로 해결 가능한데 새 컴포넌트 생성
+- ❌ 명확한 사용 목적 없이 컴포넌트 생성
+
+## 주의사항
+
+1. **클라이언트 컴포넌트**: `Carousel`, `Navbar`는 'use client'이므로 클라이언트 컴포넌트에서만 사용
+2. **Full Width 컴포넌트**: `Navbar`, `Hero`는 full width 컴포넌트입니다
+3. **컴포넌트 중앙화**: 새로운 컴포넌트는 `@/lib/ui`에 추가하고 `index.ts`에서 export (단, 위의 규칙을 먼저 따를 것)
+4. **타입 안전성**: 모든 컴포넌트는 TypeScript로 작성되었으므로 타입을 활용하세요
+5. **접근성**: 모든 컴포넌트는 접근성을 고려하여 설계되었습니다
+
+## 컴포넌트 데모
+
+모든 컴포넌트의 데모와 사용 예제는 `/components` 페이지에서 확인할 수 있습니다.
+
+## 테마 시스템
+
+- 테마는 `linear-theme.json` 기반으로 구성되어 있습니다
+- CSS 변수는 `app/globals.css`에 정의되어 있습니다
+- Tailwind 설정은 `tailwind.config.ts`에서 테마 토큰을 확장합니다
+
