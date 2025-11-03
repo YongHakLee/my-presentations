@@ -2,9 +2,13 @@
 alwaysApply: true
 ---
 
-# CodeFactory Component Library Rules
+# Reveal.js
+이 프로젝트에서 프레젠테이션을 만들 때는 Reveal.js를 사용합니다.
+`@/reveal.js`를 참고합니다.
 
-이 프로젝트는 Linear 테마 기반의 재사용 가능한 컴포넌트 라이브러리를 사용합니다.
+# Component Library Rules
+
+이 프로젝트에서 메인 페이지를 만들 때는 Linear 테마 기반의 재사용 가능한 컴포넌트 라이브러리를 사용합니다.
 모든 컴포넌트는 `@/lib/ui`에서 import하여 사용하세요.
 
 ## 컴포넌트 Import 규칙
