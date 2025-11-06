@@ -1,3 +1,28 @@
+// ============================================
+// Custom UI Components (Application-Specific)
+// ============================================
+// Note: Button, Card, Badge, and Input have been migrated to shadcn/ui
+// Import these from @/components/ui instead
+
+export { default as Typography } from './Typography';
+export type { TypographyProps } from './Typography';
+
+export { default as Hero } from './Hero';
+export type { HeroProps } from './Hero';
+
+export { default as Footer } from './Footer';
+export type { FooterProps, FooterLink, FooterSection } from './Footer';
+
+export { default as Carousel } from './Carousel';
+export type { CarouselProps } from './Carousel';
+
+export { default as Navbar } from './Navbar';
+export type { NavbarProps } from './Navbar';
+
+// ============================================
+// Legacy Exports (Kept for backward compatibility)
+// ============================================
+// These are still available but should be migrated to shadcn equivalents
 export { default as Button } from './Button';
 export type { ButtonProps } from './Button';
 
@@ -9,18 +34,3 @@ export type { CardProps, CardHeaderProps, CardTitleProps, CardContentProps, Card
 
 export { default as Badge } from './Badge';
 export type { BadgeProps } from './Badge';
-
-export { default as Typography } from './Typography';
-export type { TypographyProps } from './Typography';
-
-export { default as Carousel } from './Carousel';
-export type { CarouselProps } from './Carousel';
-
-export { default as Navbar } from './Navbar';
-export type { NavbarProps } from './Navbar';
-
-export { default as Footer } from './Footer';
-export type { FooterProps, FooterLink, FooterSection } from './Footer';
-
-export { default as Hero } from './Hero';
-export type { HeroProps } from './Hero';

@@ -1,18 +1,18 @@
 'use client';
 
+import { Hero, Typography, Footer } from '@/lib/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { CardImage } from '@/components/ui/card-image';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
-  Hero,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardImage,
-  Typography,
-  Badge,
-  Footer,
-  Input,
-  Button,
-} from '@/lib/ui';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 
@@ -124,7 +124,7 @@ export default function HomePage() {
               placeholder="프레젠테이션 검색... (제목, 설명, 주요 내용)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              fullWidth
+              className="w-full"
             />
           </div>
 
@@ -155,60 +155,17 @@ export default function HomePage() {
               <Typography variant="small" weight="semibold" color="muted">
                 정렬:
               </Typography>
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="appearance-none px-4 py-2 pr-10 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-accent transition-all cursor-pointer"
-                  style={{
-                    backgroundColor: 'rgb(31, 33, 36)',
-                    borderColor: 'rgb(55, 58, 64)',
-                    color: 'rgb(220, 225, 230)',
-                  }}
-                >
-                  <option 
-                    value="date-desc"
-                    style={{
-                      backgroundColor: 'rgb(31, 33, 36)',
-                      color: 'rgb(220, 225, 230)',
-                    }}
-                  >
-                    최신순
-                  </option>
-                  <option 
-                    value="date-asc"
-                    style={{
-                      backgroundColor: 'rgb(31, 33, 36)',
-                      color: 'rgb(220, 225, 230)',
-                    }}
-                  >
-                    오래된순
-                  </option>
-                  <option 
-                    value="title-asc"
-                    style={{
-                      backgroundColor: 'rgb(31, 33, 36)',
-                      color: 'rgb(220, 225, 230)',
-                    }}
-                  >
-                    제목순 (A-Z)
-                  </option>
-                  <option 
-                    value="title-desc"
-                    style={{
-                      backgroundColor: 'rgb(31, 33, 36)',
-                      color: 'rgb(220, 225, 230)',
-                    }}
-                  >
-                    제목순 (Z-A)
-                  </option>
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              </div>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="정렬 방식" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date-desc">최신순</SelectItem>
+                  <SelectItem value="date-asc">오래된순</SelectItem>
+                  <SelectItem value="title-asc">제목순 (A-Z)</SelectItem>
+                  <SelectItem value="title-desc">제목순 (Z-A)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -230,27 +187,22 @@ export default function HomePage() {
                 href={presentation.path}
                 className="group animate-fade-in-up"
               >
-                <Card
-                  variant="outlined"
-                  padding="none"
-                  className="h-full transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:border-primary-accent overflow-hidden"
-                >
+                <Card className="h-full transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:border-primary overflow-hidden">
                   {/* Thumbnail Image */}
                   <CardImage
                     src={presentation.thumbnail}
                     alt={presentation.title}
                     aspectRatio="video"
-                    className="group-hover:scale-105 transition-transform duration-300"
                   />
 
                   {/* Content */}
                   <div className="p-6">
-                    <CardHeader>
+                    <CardHeader className="p-0 mb-4">
                       <div className="flex items-start justify-between gap-4 mb-3">
-                        <CardTitle as="h3" className="group-hover:text-primary-accent transition-colors">
+                        <CardTitle className="group-hover:text-primary transition-colors">
                           {presentation.title}
                         </CardTitle>
-                        <Badge variant={presentation.color} dot>
+                        <Badge variant={presentation.color as any}>
                           {presentation.category}
                         </Badge>
                       </div>
@@ -259,7 +211,7 @@ export default function HomePage() {
                       </Typography>
                     </CardHeader>
 
-                    <CardContent>
+                    <CardContent className="p-0">
                       <Typography variant="regular" className="mb-4 line-clamp-2">
                         {presentation.description}
                       </Typography>
@@ -312,7 +264,7 @@ export default function HomePage() {
             {(searchQuery || selectedCategory !== '전체') && (
               <Button
                 variant="outline"
-                size="medium"
+                size="default"
                 onClick={() => {
                   setSearchQuery('');
                   setSelectedCategory('전체');

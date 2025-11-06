@@ -10,6 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Custom colors
         'primary-background': 'var(--color-primary-background)',
         'primary-text': 'var(--color-primary-text)',
         'primary-white': 'var(--color-primary-white)',
@@ -24,6 +25,40 @@ const config: Config = {
         'scrollbar-hover': 'var(--color-scrollbar-hover)',
         'scrollbar-active': 'var(--color-scrollbar-active)',
         'focus-ring': 'var(--color-focus-ring)',
+        // shadcn/ui colors
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
       fontFamily: {
         regular: 'var(--font-family-regular)',
@@ -77,6 +112,10 @@ const config: Config = {
         huge: 'var(--radius-huge)',
         full: 'var(--radius-full)',
         circle: 'var(--radius-circle)',
+        // shadcn/ui radius
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       spacing: {
         'page-padding-inline': 'var(--spacing-page-padding-inline)',
