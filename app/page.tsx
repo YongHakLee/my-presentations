@@ -23,6 +23,21 @@ const basePath = process.env.NODE_ENV === 'production' ? '/my-presentations' : '
 // 프레젠테이션 데이터
 const presentations = [
   {
+    id: '251113-ansan-connect',
+    title: 'SqueezeFace: 3D LiDAR 기반 얼굴 인식',
+    date: '2025-11-13',
+    category: '안산 커넥트',
+    description: '3D LiDAR 센서와 딥러닝을 활용한 스푸핑 방지 얼굴 인식 기술',
+    topics: [
+      '2D 얼굴 인식의 스푸핑 공격 문제',
+      '3D LiDAR 센서를 통한 근본적 해결',
+      'SAC 블록 기반 네트워크 아키텍처',
+    ],
+    path: '/251113-ansan-connect/index.html',
+    thumbnail: `${basePath}/image.png`, // 임시 썸네일 - 프로젝트 루트 이미지 사용
+    color: 'purple' as const,
+  },
+  {
     id: 'aiv-2025-0926',
     title: 'AI 바우처 현장방문',
     date: '2025-09-29',

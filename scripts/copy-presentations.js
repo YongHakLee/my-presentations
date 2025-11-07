@@ -6,6 +6,7 @@ const outDir = path.join(__dirname, '..', 'out');
 
 // 소스와 목적지 경로를 명확하게 정의
 const presentationDirs = [
+  { src: 'presentations/251113-ansan-connect', dest: '251113-ansan-connect' },
   { src: 'presentations/aiv-2025', dest: 'aiv-2025' },
   { src: 'presentations/lab-meetings', dest: 'lab-meetings' },
   { src: 'reveal.js', dest: 'reveal.js' }

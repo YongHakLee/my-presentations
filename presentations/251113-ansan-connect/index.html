@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SqueezeFace: 3D LiDAR 기반 얼굴 인식 기술</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto:wght@300;400;500;700;900&display=swap");
+
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #0ea5e9;
+        --accent-color: #f59e0b;
+        --dark-bg: #0f172a;
+        --light-bg: #f8fafc;
+        --text-dark: #1e293b;
+        --text-light: #f1f5f9;
+        --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-2: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+        --gradient-3: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Noto Sans KR", "Roboto", sans-serif;
+        background: var(--dark-bg);
+        color: var(--text-light);
+        overflow: hidden;
+        height: 100vh;
+      }
+
+      .presentation-container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+      }
+
+      .slide {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.6s ease, visibility 0s 0.6s;
+        display: flex;
+        flex-direction: column;
+        padding: 4rem 6rem;
+        background: var(--dark-bg);
+      }
+
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.6s ease, visibility 0s;
+      }
+
+      .slide-header {
+        margin-bottom: 3rem;
+        position: relative;
+      }
+
+      .slide-number {
+        position: absolute;
+        top: -2rem;
+        right: 0;
+        font-size: 1rem;
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+
+      .slide-title {
+        font-size: 3rem;
+        font-weight: 900;
+        background: var(--gradient-2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+
+      .slide-subtitle {
+        font-size: 1.5rem;
+        color: var(--accent-color);
+        font-weight: 500;
+      }
+
+      .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+      }
+
+      .content-section {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .section-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        background: var(--gradient-2);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .bullet-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .bullet-list li {
+        font-size: 1.3rem;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+        position: relative;
+      }
+
+      .bullet-list li:before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: var(--accent-color);
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+
+      .highlight {
+        color: var(--accent-color);
+        font-weight: 700;
+      }
+
+      .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+
+      .three-column {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--secondary-color);
+      }
+
+      .card-content {
+        font-size: 1.1rem;
+        line-height: 1.6;
+      }
+
+      .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .result-table th,
+      .result-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .result-table th {
+        background: var(--gradient-2);
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+
+      .result-table td {
+        font-size: 1.1rem;
+      }
+
+      .result-table tr:last-child td {
+        background: rgba(245, 158, 11, 0.2);
+        font-weight: 700;
+      }
+
+      .controls {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 1000;
+        opacity: 0;
+      }
+
+      .control-btn {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background: var(--gradient-2);
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .control-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+      }
+
+      .progress-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 999;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--gradient-2);
+        transition: width 0.3s ease;
+      }
+
+      /* Title Slide Specific Styles */
+      #slide1 {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      }
+
+      #slide1 .slide-title {
+        font-size: 4rem;
+        margin-bottom: 2rem;
+      }
+
+      #slide1 .slide-subtitle {
+        font-size: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .presenter-info {
+        font-size: 1.5rem;
+        color: var(--text-light);
+        margin-top: 2rem;
+      }
+
+      /* Animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .slide.active .content-section,
+      .slide.active .card {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .slide.active .content-section:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .slide.active .content-section:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      /* Diagram styles */
+      .diagram {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 1rem;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+      }
+
+      .flow-diagram {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .flow-box {
+        background: var(--gradient-2);
+        padding: 1.5rem 2rem;
+        border-radius: 0.8rem;
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-align: center;
+        min-width: 200px;
+      }
+
+      .flow-arrow {
+        font-size: 2rem;
+        color: var(--accent-color);
+      }
+
+      /* Emphasis box */
+      .emphasis-box {
+        background: rgba(245, 158, 11, 0.1);
+        border-left: 4px solid var(--accent-color);
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .emphasis-box strong {
+        color: var(--accent-color);
+        font-size: 1.3rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="presentation-container">
+      <!-- Slide 1: Title -->
+      <div class="slide active" id="slide1">
+        <h1 class="slide-title">SqueezeFace</h1>
+        <p class="slide-subtitle">
+          3D LiDAR 센서와 딥러닝을 활용한<br />스푸핑 방지 얼굴 인식 기술
+        </p>
+        <div class="presenter-info">
+          <p>2D 사진/영상을 이용한 얼굴 스푸핑 공격의 근본적인 해결</p>
+        </div>
+        <div
+          style="
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+          "
+        >
+          <p
+            style="
+              font-size: 1.6rem;
+              color: var(--accent-color);
+              font-weight: 700;
+            "
+          >
+            건국대학교 응용통계학과
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Agenda -->
+      <div class="slide" id="slide2">
+        <div class="slide-header">
+          <span class="slide-number">2 / 13</span>
+          <h2 class="slide-title">Index</h2>
+        </div>
+        <div class="slide-content" style="justify-content: center">
+          <div class="two-column" style="max-width: 90%; margin: 0 auto">
+            <div class="card">
+              <div class="card-title">🔍 1. Problem</div>
+              <div class="card-content">2D 얼굴 인식의 한계와 스푸핑 공격</div>
+            </div>
+            <div class="card">
+              <div class="card-title">💡 2. Solution</div>
+              <div class="card-content">3D LiDAR 센서를 활용한 근본적 해결</div>
+            </div>
+            <div class="card">
+              <div class="card-title">⚙️ 3. Core Technology</div>
+              <div class="card-content">데이터 수집, 처리, 네트워크 구조</div>
+            </div>
+            <div class="card">
+              <div class="card-title">🎯 4. Metric Learning</div>
+              <div class="card-content">Large-Margin Loss를 통한 성능 향상</div>
+            </div>
+            <div class="card">
+              <div class="card-title">📊 5. Results</div>
+              <div class="card-content">실험 결과 및 성능 비교</div>
+            </div>
+            <div class="card">
+              <div class="card-title">✅ 6. Conclusion</div>
+              <div class="card-content">결론 및 기대 효과</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Problem -->
+      <div class="slide" id="slide3">
+        <div class="slide-header">
+          <span class="slide-number">3 / 13</span>
+          <h2 class="slide-title">Problem</h2>
+          <p class="slide-subtitle">2D 얼굴 인식의 치명적 약점, '스푸핑'</p>
+        </div>
+        <div class="slide-content">
+          <div class="two-column">
+            <div class="card">
+              <div class="card-title">⚠️ 2D 기반 인식의 한계</div>
+              <div class="card-content">
+                <ul class="bullet-list">
+                  <li>
+                    입력 데이터가 <span class="highlight">RGB 2D 이미지</span>에
+                    불과
+                  </li>
+                  <li>
+                    시스템은 '실제 얼굴'과 '얼굴이 찍힌 평면'을
+                    <span class="highlight">구별하기 어려움</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">🎭 스푸핑 공격 (Spoofing Attacks)</div>
+              <div class="card-content">
+                <ul class="bullet-list">
+                  <li>
+                    타인의
+                    <span class="highlight">사진, 동영상, 3D 마스크</span> 등을
+                    이용한 공격
+                  </li>
+                  <li>
+                    SNS에서 얼굴 사진을 쉽게 구할 수 있어
+                    <span class="highlight">공격이 매우 용이</span>
+                  </li>
+                  <li>
+                    비대면 인증 시
+                    <span class="highlight">심각한 금융 사기</span>로 이어질 수
+                    있음
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="emphasis-box">
+            <strong
+              >→ '진짜'와 '가짜'를 구별할 근본적인 방법이 필요합니다</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Solution -->
+      <div class="slide" id="slide4">
+        <div class="slide-header">
+          <span class="slide-number">4 / 13</span>
+          <h2 class="slide-title">Solution</h2>
+          <p class="slide-subtitle">왜 3D LiDAR 센서인가?</p>
+        </div>
+        <div class="slide-content">
+          <div class="content-section">
+            <div class="section-title">
+              <div class="section-icon">📡</div>
+              LiDAR (Light Detection and Ranging)
+            </div>
+            <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem">
+              레이저를 쏴 목표물까지의 거리를 측정하고, 반사되는 빛을
+              분석하여<br />
+              사물의 <span class="highlight">3차원 형상(Point Cloud)</span>과
+              <span class="highlight">깊이(Depth)</span> 정보를 정확하게 추출
+            </p>
+          </div>
+
+          <div class="two-column">
+            <div class="card">
+              <div class="card-title">🛡️ 강력한 스푸핑 방지</div>
+              <div class="card-content">
+                <ul class="bullet-list">
+                  <li>
+                    사진/영상은 <span class="highlight">'평면(2D)'</span>, 실제
+                    얼굴은 <span class="highlight">'입체(3D)'</span>
+                  </li>
+                  <li>
+                    LiDAR는 3D 공간 정보를 측정하여
+                    <span class="highlight"
+                      >'평면' 스푸핑 시도를 즉각 감지</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">💪 환경 변화에 대한 강건성</div>
+              <div class="card-content">
+                <ul class="bullet-list">
+                  <li>2D 카메라는 조명, 그림자에 따라 RGB 값이 크게 변함</li>
+                  <li>
+                    LiDAR는 레이저 기반으로
+                    <span class="highlight">광 조건에 거의 영향 없음</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Core Tech 1 -->
+      <div class="slide" id="slide5">
+        <div class="slide-header">
+          <span class="slide-number">5 / 13</span>
+          <h2 class="slide-title">Core Tech 1</h2>
+          <p class="slide-subtitle">LiDAR 센서 기반 멀티모달 데이터 수집</p>
+        </div>
+        <div class="slide-content">
+          <!-- Data Flow Diagram inspired by figure_1 -->
+          <div
+            style="
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 1rem;
+              padding: 2rem;
+              margin-bottom: 2rem;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                gap: 1.5rem;
+              "
+            >
+              <!-- Real Person -->
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: var(--gradient-2);
+                    border-radius: 50%;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2.5rem;
+                  "
+                >
+                  👤
+                </div>
+                <p style="font-size: 1.1rem; font-weight: 600">Real</p>
+              </div>
+
+              <!-- Arrow -->
+              <div style="font-size: 2rem; color: var(--accent-color)">→</div>
+
+              <!-- Apple Device -->
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 90px;
+                    height: 90px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 3px solid var(--secondary-color);
+                    border-radius: 1rem;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2.5rem;
+                  "
+                >
+                  📱
+                </div>
+                <p style="font-size: 1.1rem; font-weight: 600">
+                  Apple's Device
+                </p>
+                <p style="font-size: 0.9rem; color: var(--accent-color)">
+                  LiDAR Scanner
+                </p>
+              </div>
+
+              <!-- Arrow -->
+              <div style="font-size: 2rem; color: var(--accent-color)">→</div>
+
+              <!-- 2D RGB -->
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(
+                      135deg,
+                      #ef4444,
+                      #f59e0b,
+                      #10b981,
+                      #3b82f6
+                    );
+                    border-radius: 0.5rem;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2rem;
+                    color: white;
+                    font-weight: bold;
+                  "
+                >
+                  RGB
+                </div>
+                <p style="font-size: 1.1rem; font-weight: 600">2D RGB Image</p>
+              </div>
+
+              <!-- Arrow -->
+              <div style="font-size: 2rem; color: var(--accent-color)">→</div>
+
+              <!-- Depth -->
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(135deg, #64748b, #94a3b8);
+                    border-radius: 0.5rem;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                    color: white;
+                    font-weight: bold;
+                  "
+                >
+                  D
+                </div>
+                <p style="font-size: 1.1rem; font-weight: 600">Depth Data</p>
+              </div>
+
+              <!-- Arrow -->
+              <div style="font-size: 2rem; color: var(--accent-color)">→</div>
+
+              <!-- Point Cloud -->
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+                    border-radius: 0.5rem;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.2rem;
+                    color: white;
+                    font-weight: bold;
+                  "
+                >
+                  XYZ
+                </div>
+                <p style="font-size: 1.1rem; font-weight: 600">
+                  Point Cloud Data
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-section">
+            <div class="section-title">
+              <div class="section-icon">⚡</div>
+              핵심 혁신: Warping 불필요
+            </div>
+            <div class="two-column" style="margin-top: 1.5rem">
+              <div>
+                <p style="font-size: 1.2rem; margin-bottom: 1rem">
+                  <strong style="color: #ef4444">✗ 기존 방식</strong>
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.6">
+                  여러 센서 사용 → 데이터 간 각도/시점 차이 → <br />
+                  'Warping (정렬)' 작업 필수 → 연산 복잡도 증가
+                </p>
+              </div>
+              <div>
+                <p style="font-size: 1.2rem; margin-bottom: 1rem">
+                  <strong style="color: #10b981">✓ 제안 방식</strong>
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.6">
+                  '단일 기기'로 3종류 데이터를 '동일 시점'에 추출 →<br />
+                  Warping 불필요,
+                  <span class="highlight">Pixel-by-Pixel 정렬</span>
+                </p>
+              </div>
+            </div>
+            <div class="emphasis-box">
+              <strong
+                >→ (7, H, W) 형태의 7채널 입력 데이터 생성: R, G, B, X, Y, Z,
+                Depth</strong
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Core Tech 2 -->
+      <div class="slide" id="slide6">
+        <div class="slide-header">
+          <span class="slide-number">6 / 13</span>
+          <h2 class="slide-title">Core Tech 2</h2>
+          <p class="slide-subtitle">왜 표준 CNN은 3D 데이터에 약할까?</p>
+        </div>
+        <div class="slide-content">
+          <div class="two-column">
+            <div class="card">
+              <div class="card-title">표준 CNN의 가정</div>
+              <div class="card-content">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem">
+                  <span class="highlight"
+                    >'공간적 불변성 (Spatial Invariance)'</span
+                  >
+                </p>
+                <ul class="bullet-list">
+                  <li>필터(커널)는 이미지의 모든 위치에서 동일하게 작동</li>
+                  <li>
+                    예: 왼쪽 위 고양이와 오른쪽 아래 고양이를 같은 필터로 감지
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Point Cloud 데이터의 특성</div>
+              <div class="card-content">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem">
+                  <span class="highlight">'공간적 위치'가 매우 중요</span>
+                </p>
+                <ul class="bullet-list">
+                  <li>데이터의 분포가 '위치'에 따라 완전히 달라짐</li>
+                  <li>
+                    예: 얼굴 중앙(코)의 X,Y,Z 값 ≠ 얼굴 외곽(귀)의 X,Y,Z 값
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="emphasis-box">
+            <strong
+              >⚠️ 문제점: 표준 CNN을 3D 데이터에 그대로 적용하면, 중요한 '공간적
+              위치 정보'를 효과적으로 학습하지 못함</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Core Tech 3 - Network Architecture -->
+      <div class="slide" id="slide7">
+        <div class="slide-header">
+          <span class="slide-number">7 / 13</span>
+          <h2 class="slide-title">Core Tech 3</h2>
+          <p class="slide-subtitle">SqueezeFace 네트워크 아키텍처</p>
+        </div>
+        <div class="slide-content">
+          <!-- Network Architecture Diagram inspired by figure_2 -->
+          <div
+            style="
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 1rem;
+              padding: 2rem;
+              margin-bottom: 1.5rem;
+            "
+          >
+            <h3
+              style="
+                font-size: 1.4rem;
+                color: var(--secondary-color);
+                margin-bottom: 1.5rem;
+                text-align: center;
+              "
+            >
+              🧠 전체 아키텍처 (Top: Feature Extraction & Loss / Bottom: SAC
+              Block)
+            </h3>
+
+            <!-- Top: Feature Extraction Pipeline -->
+            <div
+              style="
+                border: 2px dashed rgba(255, 255, 255, 0.2);
+                border-radius: 0.8rem;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+              "
+            >
+              <p
+                style="
+                  font-size: 1rem;
+                  color: var(--accent-color);
+                  margin-bottom: 1rem;
+                  font-weight: 600;
+                "
+              >
+                Feature Extraction (ResNet34) + Additive Angular Margin Penalty
+              </p>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  justify-content: center;
+                "
+              >
+                <div
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #ef4444,
+                      #f59e0b,
+                      #10b981,
+                      #3b82f6
+                    );
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    color: white;
+                    font-weight: bold;
+                  "
+                >
+                  7ch<br />Stack
+                </div>
+                <div style="font-size: 1.5rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: var(--gradient-2);
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    color: white;
+                    text-align: center;
+                    min-width: 80px;
+                  "
+                >
+                  3×3<br />Kernel<br />×3
+                </div>
+                <div style="font-size: 1.5rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    color: white;
+                    text-align: center;
+                    min-width: 80px;
+                  "
+                >
+                  ResNet34<br />Blocks
+                </div>
+                <div style="font-size: 1.5rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, #dc2626, #ea580c);
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    color: white;
+                    text-align: center;
+                    min-width: 70px;
+                  "
+                >
+                  FC<br />Layer
+                </div>
+                <div style="font-size: 1.5rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, #f59e0b, #eab308);
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    color: white;
+                    text-align: center;
+                    min-width: 70px;
+                  "
+                >
+                  Margin<br />Loss
+                </div>
+                <div style="font-size: 1.5rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="font-size: 0.9rem; color: white; text-align: center"
+                >
+                  Softmax
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom: SAC Block Detail -->
+            <div
+              style="
+                border: 2px dashed rgba(255, 255, 255, 0.2);
+                border-radius: 0.8rem;
+                padding: 1.5rem;
+              "
+            >
+              <p
+                style="
+                  font-size: 1rem;
+                  color: var(--accent-color);
+                  margin-bottom: 1rem;
+                  font-weight: 600;
+                "
+              >
+                SAC (Spatially Adaptive Convolution) Block
+              </p>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  justify-content: center;
+                  flex-wrap: wrap;
+                "
+              >
+                <div style="text-align: center">
+                  <div
+                    style="
+                      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+                      padding: 0.8rem;
+                      border-radius: 0.5rem;
+                      font-size: 0.85rem;
+                      color: white;
+                      margin-bottom: 0.3rem;
+                    "
+                  >
+                    Point Cloud<br />(3×H×W)
+                  </div>
+                </div>
+                <div style="font-size: 1.3rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: rgba(37, 99, 235, 0.3);
+                    padding: 0.8rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.85rem;
+                    color: white;
+                    text-align: center;
+                  "
+                >
+                  7×7 Conv<br />+ Sigmoid
+                </div>
+                <div style="font-size: 1.3rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    padding: 0.8rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.85rem;
+                    color: white;
+                    text-align: center;
+                  "
+                >
+                  Attention<br />Map
+                </div>
+                <div style="font-size: 1.3rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    padding: 0.8rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.85rem;
+                    color: white;
+                    text-align: center;
+                  "
+                >
+                  Element-wise<br />Multiply
+                </div>
+                <div style="font-size: 1.3rem; color: var(--accent-color)">
+                  →
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    padding: 0.8rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.85rem;
+                    color: white;
+                    text-align: center;
+                  "
+                >
+                  Weighted<br />Features
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="emphasis-box">
+            <strong
+              >🎯 핵심: SAC 블록이 Point Cloud의 공간적 위치 정보를 활용하여
+              중요한 영역(눈, 코 등)에 가중치를 부여</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Core Tech 4 -->
+      <div class="slide" id="slide8">
+        <div class="slide-header">
+          <span class="slide-number">8 / 13</span>
+          <h2 class="slide-title">Core Tech 4</h2>
+          <p class="slide-subtitle">변별력 극대화 (Metric Learning)</p>
+        </div>
+        <div class="slide-content">
+          <div class="content-section">
+            <div class="section-title">
+              <div class="section-icon">🎯</div>
+              목표: 신원 구별 (Verification)
+            </div>
+            <p style="font-size: 1.3rem; margin-bottom: 2rem">
+              단순 분류(Classification)가 아닌,
+              <span class="highlight">"이 두 사진이 같은 사람이냐"</span>를 구별
+            </p>
+          </div>
+
+          <div class="two-column">
+            <div class="card">
+              <div class="card-title">Metric Learning 방식</div>
+              <div class="card-content">
+                <ul class="bullet-list">
+                  <li>
+                    <span class="highlight">동일 인물 (Intra-class)</span
+                    ><br />→ 특징 벡터를 가깝게
+                  </li>
+                  <li>
+                    <span class="highlight">다른 인물 (Inter-class)</span
+                    ><br />→ 특징 벡터를 멀게
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Large-Margin Loss (ArcFace)</div>
+              <div class="card-content">
+                <ul class="bullet-list">
+                  <li>각도(Angle) 기반의 마진(Margin) 적용</li>
+                  <li>클래스 간 변별력 극대화</li>
+                  <li>미세한 차이도 구별 가능</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="emphasis-box">
+            <strong
+              >→ 특징 공간(Embedding space)에서 신원 간의 변별력이
+              극대화됨</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Results 1 -->
+      <div class="slide" id="slide9">
+        <div class="slide-header">
+          <span class="slide-number">9 / 13</span>
+          <h2 class="slide-title">Results 1</h2>
+          <p class="slide-subtitle">SqueezeFace 성능 검증</p>
+        </div>
+        <div class="slide-content">
+          <div class="content-section">
+            <div class="section-title">
+              <div class="section-icon">📊</div>
+              데이터셋 & 비교 모델
+            </div>
+            <p style="font-size: 1.2rem; margin-bottom: 1.5rem">
+              <strong>데이터셋:</strong> 83명의 한국인, 784개 얼굴 데이터 (RGB,
+              Depth, Point Cloud)
+            </p>
+
+            <table class="result-table">
+              <thead>
+                <tr>
+                  <th>모델</th>
+                  <th>Accuracy</th>
+                  <th>F1 Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1. RGB-only (기준)</td>
+                  <td>0.9979</td>
+                  <td>0.8995</td>
+                </tr>
+                <tr>
+                  <td>2. Our data + ResNet34</td>
+                  <td>0.9980</td>
+                  <td>0.9056</td>
+                </tr>
+                <tr>
+                  <td>3. Our data + SqueezeFace (제안)</td>
+                  <td><strong>0.9988</strong></td>
+                  <td><strong>0.9345</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="emphasis-box">
+            <strong
+              >✓ 3D 데이터 추가: F1 Score 89.95% → 90.56% (소폭 상승)</strong
+            ><br />
+            <strong>✓ SqueezeFace 적용: F1 Score → 93.45% (대폭 향상)</strong
+            ><br />
+            <strong
+              >→ SAC 블록이 3D 공간 정보를 효과적으로 학습하여 성능
+              극대화</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Results 2 -->
+      <div class="slide" id="slide10">
+        <div class="slide-header">
+          <span class="slide-number">10 / 13</span>
+          <h2 class="slide-title">Results 2</h2>
+          <p class="slide-subtitle">다양한 환경에서의 강건성</p>
+        </div>
+        <div class="slide-content">
+          <div class="two-column">
+            <div class="card">
+              <div class="card-title">Test 1: 다양한 표정</div>
+              <div class="card-content">
+                <p style="font-size: 1.1rem; margin-bottom: 1rem">
+                  동일 인물이 여러 표정을 지었을 때, 같은 사람으로 인식하는가?
+                </p>
+                <ul class="bullet-list">
+                  <li>
+                    <strong style="color: #ef4444">RGB-only:</strong> 표정 변화
+                    시 유사도 급락 (Pair 4 = 0.5164)
+                  </li>
+                  <li>
+                    <strong style="color: #10b981">SqueezeFace:</strong> 표정이
+                    달라도 높은 유사도 유지 (Pair 4 = 0.8258)
+                  </li>
+                </ul>
+                <div class="emphasis-box" style="margin-top: 1rem">
+                  <strong>→ 3D 형상 정보 덕분에 표정 변화에도 강건</strong>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">
+                Test 2: 적은 데이터 (Three-shot Learning)
+              </div>
+              <div class="card-content">
+                <p style="font-size: 1.1rem; margin-bottom: 1rem">
+                  인물당 단 3장의 사진만으로 학습
+                </p>
+                <ul class="bullet-list">
+                  <li>RGB-only: F1 Score 88.84%</li>
+                  <li>SqueezeFace: F1 Score 90.36%</li>
+                </ul>
+                <div class="emphasis-box" style="margin-top: 1rem">
+                  <strong>→ 더 적은 데이터로도 효율적인 학습 가능</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Conclusion -->
+      <div class="slide" id="slide11">
+        <div class="slide-header">
+          <span class="slide-number">11 / 13</span>
+          <h2 class="slide-title">Conclusion</h2>
+        </div>
+        <div class="slide-content">
+          <div class="three-column">
+            <div class="card">
+              <div class="card-title">🛡️ Contribution 1</div>
+              <div class="card-content">
+                <strong style="color: var(--accent-color); font-size: 1.2rem"
+                  >스푸핑 원천 차단</strong
+                >
+                <p style="margin-top: 1rem; font-size: 1.1rem">
+                  3D LiDAR 센서로 2D 사진/영상 기반 스푸핑 공격을 완벽하게 방지
+                </p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">🧠 Contribution 2</div>
+              <div class="card-content">
+                <strong style="color: var(--accent-color); font-size: 1.2rem"
+                  >고성능 3D 융합 모델</strong
+                >
+                <p style="margin-top: 1rem; font-size: 1.1rem">
+                  SAC 블록으로 3D 공간 정보를 효과적으로 융합 (F1 Score 93.45%)
+                </p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">💪 Contribution 3</div>
+              <div class="card-content">
+                <strong style="color: var(--accent-color); font-size: 1.2rem"
+                  >뛰어난 강건성</strong
+                >
+                <p style="margin-top: 1rem; font-size: 1.1rem">
+                  조명 조건, 표정/자세 변화에도 일관된 인식 성능
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-section" style="margin-top: 2rem">
+            <div class="section-title">
+              <div class="section-icon">🚀</div>
+              기대 효과
+            </div>
+            <p style="font-size: 1.3rem; line-height: 1.8">
+              인터넷 뱅킹, 사내 보안, 비대면 인증 시스템 등<br />
+              <span class="highlight"
+                >높은 보안성이 요구되는 모든 분야에 적용 가능</span
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Q&A -->
+      <div class="slide" id="slide13">
+        <div class="slide-header">
+          <span class="slide-number">13 / 13</span>
+          <h2 class="slide-title">Thank You</h2>
+        </div>
+        <div
+          class="slide-content"
+          style="
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+          "
+        >
+          <h3 style="font-size: 3rem; margin-bottom: 3rem">Thank you</h3>
+
+          <div class="content-section" style="margin-top: 2rem">
+            <p style="font-size: 1.3rem; margin-bottom: 1.5rem">
+              <strong>특허 정보</strong>
+            </p>
+            <p style="font-size: 1.1rem; line-height: 1.8">
+              3D 데이터를 활용한 얼굴인식 인공지능 모델<br />
+              (출원번호 10-2021-0099576)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button
+        class="control-btn"
+        id="prevBtn"
+        title="이전 슬라이드 (← 또는 PageUp)"
+      >
+        ◀
+      </button>
+      <button
+        class="control-btn"
+        id="nextBtn"
+        title="다음 슬라이드 (→ 또는 PageDown)"
+      >
+        ▶
+      </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const totalSlides = slides.length;
+      const progressFill = document.getElementById("progressFill");
+
+      function showSlide(index) {
+        slides.forEach((slide) => slide.classList.remove("active"));
+        slides[index].classList.add("active");
+        currentSlide = index;
+        updateProgress();
+      }
+
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+          showSlide(currentSlide + 1);
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          showSlide(currentSlide - 1);
+        }
+      }
+
+      function updateProgress() {
+        const progress = ((currentSlide + 1) / totalSlides) * 100;
+        progressFill.style.width = progress + "%";
+      }
+
+      // Event Listeners
+      document.getElementById("nextBtn").addEventListener("click", nextSlide);
+      document.getElementById("prevBtn").addEventListener("click", prevSlide);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          prevSlide();
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          showSlide(0);
+        } else if (e.key === "End") {
+          e.preventDefault();
+          showSlide(totalSlides - 1);
+        }
+      });
+
+      // Touch support for mobile
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      document.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        if (touchEndX < touchStartX - 50) {
+          nextSlide();
+        }
+        if (touchEndX > touchStartX + 50) {
+          prevSlide();
+        }
+      }
+
+      // Initialize
+      updateProgress();
+    </script>
+  </body>
+</html>
