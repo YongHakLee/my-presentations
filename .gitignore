@@ -46,3 +46,7 @@ image.png
 *-results.md
 test-*.html
 working-*.md
+
+# Development symlinks (presentation testing)
+presentations/*/[0-9]*-*
+public/[0-9]*-*
