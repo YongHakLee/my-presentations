@@ -42,7 +42,7 @@
         /* Typography */
         .reveal {
             font-family: 'Noto Sans KR', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             line-height: 1.6;
         }
 
@@ -81,13 +81,13 @@
             gap: 2rem;
             height: 100%;
             align-items: center;
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .tool-screenshot {
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            max-width: 100%;
+            max-width: 85%;
             height: auto;
         }
 
@@ -98,7 +98,7 @@
 
         .tool-content h3 {
             color: var(--accent);
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             margin-bottom: 0.5rem;
         }
 
@@ -112,9 +112,10 @@
         }
 
         .tool-content li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             padding-left: 1.5rem;
             position: relative;
+            line-height: 1.5;
         }
 
         .tool-content li::before {
@@ -225,18 +226,18 @@
 
         /* Process steps */
         .process-step {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .process-step h3 {
             color: var(--accent);
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .process-step img {
             border-radius: 8px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            max-width: 80%;
+            max-width: 55%;
         }
 
         /* Responsive design */
@@ -286,28 +287,33 @@
                 </div>
             </section>
 
-            <!-- Slide 3: How to Use -->
+            <!-- Slide 3: How to Use (Step 1 - Search) -->
             <section data-transition="slide">
                 <h2>MCP 도구 사용 방법</h2>
 
-                <div class="process-step">
+                <div class="process-step" style="margin-top: 3rem;">
                     <h3>1단계: 검색</h3>
                     <p class="fragment fade-in" data-fragment-index="1">
-                        <img src="./imgs/search-mcp.png" alt="MCP 검색">
+                        <img src="./imgs/search-mcp.png" alt="MCP 검색" style="max-width: 70%;">
                     </p>
-                    <p class="fragment fade-in" data-fragment-index="2">'~ MCP' 키워드로 검색</p>
-                </div>
-
-                <div class="process-step fragment fade-in" data-fragment-index="3">
-                    <h3>2단계: 설치 확인</h3>
-                    <p class="fragment fade-in" data-fragment-index="4">
-                        <img src="./imgs/installation-mcp.png" alt="MCP 설치">
-                    </p>
-                    <p class="fragment fade-in" data-fragment-index="5">URL 접속하여 설치 방법 확인</p>
+                    <p class="fragment fade-in" data-fragment-index="2" style="font-size: 1.5rem; margin-top: 1.5rem;">'~ MCP' 키워드로 검색</p>
                 </div>
             </section>
 
-            <!-- Slide 4: Configuration Format -->
+            <!-- Slide 4: How to Use (Step 2 - Installation) -->
+            <section data-transition="slide">
+                <h2>MCP 도구 사용 방법</h2>
+
+                <div class="process-step" style="margin-top: 3rem;">
+                    <h3>2단계: 설치 확인</h3>
+                    <p class="fragment fade-in" data-fragment-index="1">
+                        <img src="./imgs/installation-mcp.png" alt="MCP 설치" style="max-width: 70%;">
+                    </p>
+                    <p class="fragment fade-in" data-fragment-index="2" style="font-size: 1.5rem; margin-top: 1.5rem;">URL 접속하여 설치 방법 확인</p>
+                </div>
+            </section>
+
+            <!-- Slide 5: Configuration Format -->
             <section data-transition="slide">
                 <h2>설정 파일 구조</h2>
 
@@ -341,7 +347,7 @@
                 </div>
             </section>
 
-            <!-- Slide 5: Tool Section Intro -->
+            <!-- Slide 6: Tool Section Intro -->
             <section data-transition="fade" data-background-color="#2a2a2a">
                 <h2>5가지 MCP 도구</h2>
 
@@ -373,7 +379,7 @@
                 </div>
             </section>
 
-            <!-- Slide 6: Sequential-Thinking -->
+            <!-- Slide 7: Sequential-Thinking -->
             <section data-transition="convex" data-background-color="#2a2a2a">
                 <h2>🧠 Sequential-Thinking</h2>
 
@@ -391,8 +397,8 @@
                         <div class="fragment fade-in" data-fragment-index="2">
                             <h3>핵심 기능</h3>
                             <ul>
-                                <li class="fragment fade-in" data-fragment-index="3">복잡한 문제를 정의, 분석, 종합, 결론 등 여러 단계로 구조화하여 사고 과정을 체계적으로 관리</li>
-                                <li class="fragment fade-in" data-fragment-index="4">각 사고 단계별 진행 상황을 추적하고, 이전 생각을 수정하거나 다른 해결 경로(분기)를 탐색하는 유연한 문제 해결 지원</li>
+                                <li class="fragment fade-in" data-fragment-index="3">복잡한 문제를 여러 단계로 구조화하여 체계적으로 관리</li>
+                                <li class="fragment fade-in" data-fragment-index="4">각 단계별 진행 상황 추적 및 유연한 경로 탐색 지원</li>
                                 <li class="fragment fade-in" data-fragment-index="5">전체 사고 과정에 대한 요약 생성 기능 제공</li>
                             </ul>
                         </div>
@@ -405,7 +411,7 @@
                 </div>
             </section>
 
-            <!-- Slide 7: Playwright -->
+            <!-- Slide 8: Playwright -->
             <section data-transition="convex" data-background-color="#2a2a2a">
                 <h2>🎭 Playwright</h2>
 
@@ -423,9 +429,9 @@
                         <div class="fragment fade-in" data-fragment-index="2">
                             <h3>핵심 기능</h3>
                             <ul>
-                                <li class="fragment fade-in" data-fragment-index="3">Playwright 프레임워크를 기반으로 웹페이지 탐색, 클릭, 폼 작성 등 실제 사용자 행동을 자동화</li>
-                                <li class="fragment fade-in" data-fragment-index="4">스크린샷이나 시각적 분석 없이 웹페이지의 구조적 데이터(접근성 트리)를 통해 상호작용하여 높은 신뢰성 보장</li>
-                                <li class="fragment fade-in" data-fragment-index="5">자동화된 테스트 케이스 생성, 웹 스크래핑, 자바스크립트 실행 등 다양한 웹 자동화 작업 수행</li>
+                                <li class="fragment fade-in" data-fragment-index="3">웹페이지 탐색, 클릭, 폼 작성 등 사용자 행동 자동화</li>
+                                <li class="fragment fade-in" data-fragment-index="4">접근성 트리를 통한 상호작용으로 높은 신뢰성 보장</li>
+                                <li class="fragment fade-in" data-fragment-index="5">테스트 케이스 생성, 웹 스크래핑, 자바스크립트 실행 등</li>
                             </ul>
                         </div>
 
@@ -437,7 +443,7 @@
                 </div>
             </section>
 
-            <!-- Slide 8: Context7 -->
+            <!-- Slide 9: Context7 -->
             <section data-transition="convex" data-background-color="#2a2a2a">
                 <h2>📚 Context7</h2>
 
@@ -469,7 +475,7 @@
                 </div>
             </section>
 
-            <!-- Slide 9: MagicUI -->
+            <!-- Slide 10: MagicUI -->
             <section data-transition="convex" data-background-color="#2a2a2a">
                 <h2>✨ MagicUI</h2>
 
@@ -501,7 +507,7 @@
                 </div>
             </section>
 
-            <!-- Slide 10: Chrome DevTools -->
+            <!-- Slide 11: Chrome DevTools -->
             <section data-transition="convex" data-background-color="#2a2a2a">
                 <h2>🔧 Chrome DevTools</h2>
 
@@ -519,9 +525,9 @@
                         <div class="fragment fade-in" data-fragment-index="2">
                             <h3>핵심 기능</h3>
                             <ul>
-                                <li class="fragment fade-in" data-fragment-index="3">AI가 실제 크롬 브라우저를 제어하며 실시간으로 웹페이지를 검사, 디버깅, 성능 분석 수행</li>
-                                <li class="fragment fade-in" data-fragment-index="4">네트워크 요청 분석, 콘솔 로그 확인, 성능 추적 등을 통해 '눈으로 보면서' 코드를 수정하고 검증</li>
-                                <li class="fragment fade-in" data-fragment-index="5">단순 코드 생성을 넘어, 생성된 코드의 실제 동작을 확인하고 최적화하는 동적인 개발 지원</li>
+                                <li class="fragment fade-in" data-fragment-index="3">실시간 웹페이지 검사, 디버깅, 성능 분석 수행</li>
+                                <li class="fragment fade-in" data-fragment-index="4">네트워크 분석, 콘솔 확인, 성능 추적으로 코드 검증</li>
+                                <li class="fragment fade-in" data-fragment-index="5">생성된 코드의 실제 동작 확인 및 최적화 지원</li>
                             </ul>
                         </div>
 
@@ -533,7 +539,7 @@
                 </div>
             </section>
 
-            <!-- Slide 11: Comparison Table -->
+            <!-- Slide 12: Comparison Table -->
             <section data-transition="slide">
                 <h2>MCP 도구 한눈에 비교</h2>
 
@@ -581,7 +587,7 @@
                 </table>
             </section>
 
-            <!-- Slide 12: Thank You -->
+            <!-- Slide 13: Thank You -->
             <section data-transition="fade-out" data-background-color="#1a1a1a">
                 <h1>THANK YOU!</h1>
                 <p style="font-size: 2rem; margin-top: 3rem; color: rgba(255, 255, 255, 0.6);">Questions?</p>
