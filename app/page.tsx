@@ -38,6 +38,23 @@ const presentations = [
     color: 'purple' as const,
   },
   {
+    id: 'lab-meeting-251112',
+    title: 'MCP (Model Context Protocol) and TIPS',
+    date: '2024-11-12',
+    category: 'Lab Meeting',
+    description: 'AI 에이전트와 외부 도구를 연결하는 MCP 도구 생태계 소개',
+    topics: [
+      'Sequential-Thinking: 단계별 사고 보조 도구',
+      'Playwright: 웹 브라우저 자동화',
+      'Context7: 최신 기술 문서 실시간 제공',
+      'MagicUI: UI 컴포넌트 탐색 및 코드 생성',
+      'Chrome DevTools: 디버깅 및 성능 분석',
+    ],
+    path: '/lab-meetings/251112/index.html',
+    thumbnail: `${basePath}/lab-meetings/251112/imgs/search-mcp.png`,
+    color: 'blue' as const,
+  },
+  {
     id: 'aiv-2025-0926',
     title: 'AI 바우처 현장방문',
     date: '2025-09-29',
