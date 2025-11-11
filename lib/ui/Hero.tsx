@@ -14,6 +14,7 @@ export interface HeroProps extends React.HTMLAttributes<HTMLElement> {
   overlay?: boolean;
   size?: 'small' | 'medium' | 'large' | 'fullscreen';
   align?: 'left' | 'center' | 'right';
+  titleClassName?: string;
 }
 
 const Hero = React.forwardRef<HTMLElement, HeroProps>(
@@ -29,6 +30,7 @@ const Hero = React.forwardRef<HTMLElement, HeroProps>(
       overlay = false,
       size = 'large',
       align = 'center',
+      titleClassName,
       ...props
     },
     ref
@@ -91,10 +93,10 @@ const Hero = React.forwardRef<HTMLElement, HeroProps>(
             
             <Typography
               as="h1"
-              variant="title6"
+              variant="title9"
               weight="bold"
               align={align}
-              className="leading-tight"
+              className={cn("leading-tight", titleClassName)}
             >
               {title}
             </Typography>
